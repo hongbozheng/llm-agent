@@ -1,0 +1,133 @@
+maohanqideMacBook-Air:CME group maohanqi$ python3 src/engine.py
+[DEBUG] GPT Response:
+{
+  "strategy_type": "Momentum Trading",
+  "assets": ["TSLA"],
+  "lookback_days": 90,
+  "indicators": {
+    "momentum_indicator": "Relative Strength Index (RSI)",
+    "moving_average": "Exponential Moving Average (EMA)",
+    "momentum_thresholds": {
+      "RSI_overbought": 70,
+      "RSI_oversold": 30,
+      "EMA_period_short": 10,
+      "EMA_period_long": 30
+    }
+  },
+  "evaluation_metrics": ["Sharpe Ratio", "Maximum Drawdown", "Win Rate", "Profit Factor"],
+  "next_steps": [
+    "Collect historical price data for TSLA over the past 90 days.",
+    "Calculate the 10-day and 30-day EMA to identify the trend direction.",
+    "Compute the RSI to determine overbought or oversold conditions.",
+    "Design buy signals when RSI is below 30 and short EMA crosses above long EMA.",
+    "Design sell signals when RSI is above 70 and short EMA crosses below long EMA.",
+    "Backtest the strategy using historical data to evaluate performance using the defined metrics.",
+    "Adjust the parameters if necessary and re-evaluate the strategy."
+  ]
+}
+[INFO] Strategy Plan:
+{
+  "strategy_type": "Momentum Trading",
+  "assets": [
+    "TSLA"
+  ],
+  "lookback_days": 90,
+  "indicators": {
+    "momentum_indicator": "Relative Strength Index (RSI)",
+    "moving_average": "Exponential Moving Average (EMA)",
+    "momentum_thresholds": {
+      "RSI_overbought": 70,
+      "RSI_oversold": 30,
+      "EMA_period_short": 10,
+      "EMA_period_long": 30
+    }
+  },
+  "evaluation_metrics": [
+    "Sharpe Ratio",
+    "Maximum Drawdown",
+    "Win Rate",
+    "Profit Factor"
+  ],
+  "next_steps": [
+    "Collect historical price data for TSLA over the past 90 days.",
+    "Calculate the 10-day and 30-day EMA to identify the trend direction.",
+    "Compute the RSI to determine overbought or oversold conditions.",
+    "Design buy signals when RSI is below 30 and short EMA crosses above long EMA.",
+    "Design sell signals when RSI is above 70 and short EMA crosses below long EMA.",
+    "Backtest the strategy using historical data to evaluate performance using the defined metrics.",
+    "Adjust the parameters if necessary and re-evaluate the strategy."
+  ]
+}
+maohanqideMacBook-Air:CME group maohanqi$ touch .gitignore
+maohanqideMacBook-Air:CME group maohanqi$ python3 src/engine.py
+
+============================================================
+🚀 **Execution Make you rich today Strategy** 🚀
+
+============================================================
+System prompt
+You are a quantitative finance assistant. When the user asks a question, respond with a complete strategy plan with several steps in JSON format. Your output must be a JSON object that includes 1. steps for generating the strategy 2. strategy it self : strategy_type, assets, lookback_days, indicators, evaluation_metrics, and next_steps.
+
+============================================================
+User prompt
+Question: What's a good momentum trading strategy for TSLA over the past 3 months?
+
+Please respond in valid JSON format only.
+[DEBUG] GPT Response:
+{
+  "steps_for_generating_strategy": [
+    "Step 1: Define the trading universe, focusing on TSLA for the past 3 months.",
+    "Step 2: Gather historical price data for TSLA over the specified period.",
+    "Step 3: Choose a suitable momentum indicator, such as the Relative Strength Index (RSI) or Moving Average Convergence Divergence (MACD).",
+    "Step 4: Determine the lookback period for the momentum indicator, typically ranging from 14 to 30 days.",
+    "Step 5: Implement buy/sell signals based on the chosen momentum indicator, e.g., buy when RSI crosses above 30 and sell when it crosses below 70.",
+    "Step 6: Backtest the strategy using historical data to evaluate its performance.",
+    "Step 7: Analyze the results using evaluation metrics such as Sharpe Ratio, Maximum Drawdown, and Total Return.",
+    "Step 8: Adjust parameters and iterate on the strategy as needed to optimize performance."
+  ],
+  "strategy": {
+    "strategy_type": "Momentum Trading",
+    "assets": ["TSLA"],
+    "lookback_days": 14,
+    "indicators": ["RSI"],
+    "evaluation_metrics": ["Sharpe Ratio", "Maximum Drawdown", "Total Return"],
+    "next_steps": [
+      "Backtest the strategy using the defined parameters over the past 3 months.",
+      "Evaluate the performance using the specified evaluation metrics.",
+      "Optimize momentum indicator parameters if necessary to enhance strategy effectiveness."
+    ]
+  }
+}
+[INFO] Strategy Plan:
+{
+  "steps_for_generating_strategy": [
+    "Step 1: Define the trading universe, focusing on TSLA for the past 3 months.",
+    "Step 2: Gather historical price data for TSLA over the specified period.",
+    "Step 3: Choose a suitable momentum indicator, such as the Relative Strength Index (RSI) or Moving Average Convergence Divergence (MACD).",
+    "Step 4: Determine the lookback period for the momentum indicator, typically ranging from 14 to 30 days.",
+    "Step 5: Implement buy/sell signals based on the chosen momentum indicator, e.g., buy when RSI crosses above 30 and sell when it crosses below 70.",
+    "Step 6: Backtest the strategy using historical data to evaluate its performance.",
+    "Step 7: Analyze the results using evaluation metrics such as Sharpe Ratio, Maximum Drawdown, and Total Return.",
+    "Step 8: Adjust parameters and iterate on the strategy as needed to optimize performance."
+  ],
+  "strategy": {
+    "strategy_type": "Momentum Trading",
+    "assets": [
+      "TSLA"
+    ],
+    "lookback_days": 14,
+    "indicators": [
+      "RSI"
+    ],
+    "evaluation_metrics": [
+      "Sharpe Ratio",
+      "Maximum Drawdown",
+      "Total Return"
+    ],
+    "next_steps": [
+      "Backtest the strategy using the defined parameters over the past 3 months.",
+      "Evaluate the performance using the specified evaluation metrics.",
+      "Optimize momentum indicator parameters if necessary to enhance strategy effectiveness."
+    ]
+  }
+}
