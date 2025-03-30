@@ -9,11 +9,26 @@ from dotenv import load_dotenv
 import time
 
 import json
-
+import re
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def ask_gpt_for_strategy(
+def sanitize_prompt_for_filename(prompt: str) -> str:
+    """
+    Converts a prompt string into a safe filename by:
+    - Replacing all whitespace with underscores
+    - Removing or replacing unsafe characters
+    """
+    # Replace all whitespace with underscores
+    safe = re.sub(r'\s+', '_', prompt.strip())
+
+    # Remove characters unsafe for filenames
+    safe = re.sub(r'[<>:"/\\|?*]', '', safe)
+
+    # Optional: truncate if too long
+    return safe[:100]
+
+def ask_gpt_for_strategy_step(
     finance_question: str,
     llm_model: str = "gpt-4o" 
 ):
@@ -22,12 +37,51 @@ def ask_gpt_for_strategy(
     """
 
     # System prompt to enforce JSON structure
-    system_prompt = (
-        "You are a quantitative finance assistant. "
-        "When the user asks a question, respond with a complete strategy plan with several steps in JSON format. "
-        "Your output must be a JSON object that includes 1. steps for generating the strategy 2. strategy it self : strategy_type, assets, lookback_days, indicators, "
-        "evaluation_metrics, and next_steps."
-    )
+    # system_prompt = (
+    #     "You are a quantitative finance assistant. "
+    #     "When the user asks a question, respond with a complete strategy plan with several steps in JSON format. "
+    #     "Your output must be a JSON object that includes 1. steps for generating the strategy  " # 2. strategy it self : strategy_type, assets, lookback_days, indicators, "evaluation_metrics, and next_steps."
+        
+    # )
+    system_prompt = f"""
+You are a quantitative finance assistant.
+
+Your task is to analyze the user's finance-related question:
+'{finance_question}'
+
+---
+
+**Instructions:**
+- Do NOT generate a full strategy or code yet, although in the end of all steps I shuold get strategy it self : strategy_type, assets, lookback_days, indicators, evaluation_metrics, and next_steps.
+- Break the problem down into a step-by-step decision-making plan.
+- For each step, explain the reasoning.
+- Output strictly in JSON format.
+
+**Example Output:**
+```json
+{{
+  "question": "{finance_question}",
+  "steps": [
+    {{
+      "step": "Identify asset and timeframe",
+      "reasoning": "Determine which asset(s) and what historical period are relevant to the user's query."
+    }},
+    {{
+      "step": "Select strategy type",
+      "reasoning": "Decide whether a momentum, mean-reversion, or ML-based approach is more appropriate."
+    }},
+    {{
+      "step": "Choose technical indicators",
+      "reasoning": "Pick indicators like SMA, RSI based on the strategy goal."
+    }},
+    {{
+      "step": "Define evaluation metrics",
+      "reasoning": "Sharpe Ratio and Max Drawdown are useful to evaluate performance."
+    }}
+  ]
+}}
+""".strip()
+    
 
     user_prompt = f"Question: {finance_question}\n\nPlease respond in valid JSON format only."
 
@@ -65,8 +119,22 @@ def ask_gpt_for_strategy(
     
 if __name__ == "__main__":
     question = "What's a good momentum trading strategy for TSLA over the past 3 months?"
-    result = ask_gpt_for_strategy(question)
+    result = ask_gpt_for_strategy_step(question)
     time.sleep(10)
     if result:
         print("[INFO] Strategy Plan:")
-        print(json.dumps(result, indent=2))
+        pretty_json = json.dumps(result, indent=2)
+        print(pretty_json)
+
+        safe_prompt = sanitize_prompt_for_filename(question)
+        filename = f"strategy_plan_{safe_prompt}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        save_path = os.path.join("outputs", filename)
+
+        # Ensure the output folder exists
+        os.makedirs("outputs", exist_ok=True)
+
+        with open(save_path, "w") as f:
+            f.write(pretty_json)
+
+        print(f"[INFO] Saved strategy plan to: {save_path}")
+
