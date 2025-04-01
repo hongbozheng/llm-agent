@@ -1,0 +1,11 @@
+openai
+python-dotenv
+yfinance
+pandas
+numpy
+matplotlib
+ta
+TA-Lib
+backtrader
+scikit-learn
+plotly

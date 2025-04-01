@@ -52,7 +52,7 @@ Your task is to analyze the user's finance-related question:
 ---
 
 **Instructions:**
-- Do NOT generate a full strategy or code yet, although in the end of all steps I shuold get strategy it self : strategy_type, assets, lookback_days, indicators, evaluation_metrics, and next_steps.
+- Do NOT generate a full strategy or code yet, although in the end of all steps I shuold get 1. code to test my strategy 2.strategy it self : strategy_type, assets, lookback_days, indicators, evaluation_metrics, and next_steps.
 - Break the problem down into a step-by-step decision-making plan.
 - For each step, explain the reasoning.
 - Output strictly in JSON format.
@@ -118,7 +118,7 @@ Your task is to analyze the user's finance-related question:
         return None
     
 if __name__ == "__main__":
-    question = "What's a good momentum trading strategy for TSLA over the past 3 months?"
+    question = "What's a good momentum trading strategy for NVDA over the past week?"
     result = ask_gpt_for_strategy_step(question)
     time.sleep(10)
     if result:
@@ -128,10 +128,10 @@ if __name__ == "__main__":
 
         safe_prompt = sanitize_prompt_for_filename(question)
         filename = f"strategy_plan_{safe_prompt}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        save_path = os.path.join("outputs", filename)
+        save_path = os.path.join("step_outputs", filename)
 
         # Ensure the output folder exists
-        os.makedirs("outputs", exist_ok=True)
+        os.makedirs("step_outputs", exist_ok=True)
 
         with open(save_path, "w") as f:
             f.write(pretty_json)
