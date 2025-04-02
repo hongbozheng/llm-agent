@@ -118,7 +118,7 @@ Your task is to analyze the user's finance-related question:
         return None
     
 if __name__ == "__main__":
-    question = "What's a good momentum trading strategy for NVDA over the past week?"
+    question = "What's a good momentum trading strategy for APPL over the past week?"
     result = ask_gpt_for_strategy_step(question)
     time.sleep(10)
     if result:

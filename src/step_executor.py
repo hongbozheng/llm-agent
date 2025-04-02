@@ -4,11 +4,12 @@ import os
 import re
 import openai
 from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def ask_gpt_to_execute_step_with_files(plan, step_index, output_file_paths, llm_model="gpt-4o"):
+def ask_gpt_to_execute_step_with_files(plan, step_index, output_file_paths, llm_model): # gpt-4o , deepseek-chat
     question = plan["question"]
     current_step = plan["steps"][step_index]
 
@@ -37,18 +38,31 @@ Current step:
 Please generate Python code that completes this step, based on all context so far.
 Respond ONLY with a code block.
 """.strip()
+    if llm_model == "gpt-4o":
+        response = openai.chat.completions.create(
+            model=llm_model,
+            messages=[{"role": "system", "content": system_prompt}],
+            temperature=0.5
+        )
+    elif llm_model == "deepseek-chat":
+        load_dotenv()
+        deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
+        client = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
 
-    response = openai.chat.completions.create(
-        model=llm_model,
-        messages=[{"role": "system", "content": system_prompt}],
-        temperature=0.5
-    )
+        response = client.chat.completions.create(
+            model="deepseek-chat",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                
+            ],
+            stream=False
+        )
     content = response.choices[0].message.content.strip()
     match = re.search(r"```python(.*?)```", content, re.DOTALL)
     return match.group(1).strip() if match else content
 
 
-def run_strategy_steps(plan_path):
+def run_strategy_steps(plan_path,llm_model):
     with open(plan_path, "r") as f:
         plan = json.load(f)
 
@@ -61,7 +75,7 @@ def run_strategy_steps(plan_path):
         print(f"==============================")
 
         # Ask GPT with context from previous step output files
-        code = ask_gpt_to_execute_step_with_files(plan, i, step_outputs)
+        code = ask_gpt_to_execute_step_with_files(plan, i, step_outputs,llm_model)
 
         if code:
             output_path = f"step/step_{i:02d}_output.py"
@@ -91,5 +105,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--plan", required=True, help="Path to strategy plan JSON")
     args = parser.parse_args()
-    run_strategy_steps(args.plan)
+    llm_model_choice = "deepseek-chat" # gpt-4o , deepseek-chat
+    run_strategy_steps(args.plan,llm_model_choice)
 
