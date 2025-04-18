@@ -11,6 +11,7 @@ import time
 import json
 import re
 load_dotenv()
+from openai import OpenAI # for deepseek
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def sanitize_prompt_for_filename(prompt: str) -> str:
@@ -30,19 +31,12 @@ def sanitize_prompt_for_filename(prompt: str) -> str:
 
 def ask_gpt_for_strategy_step(
     finance_question: str,
-    llm_model: str = "gpt-4o" 
+    llm_model: str = "gpt-4o"
 ):
     """
     Ask GPT a finance-related question and get back a structured JSON strategy plan.
     """
 
-    # System prompt to enforce JSON structure
-    # system_prompt = (
-    #     "You are a quantitative finance assistant. "
-    #     "When the user asks a question, respond with a complete strategy plan with several steps in JSON format. "
-    #     "Your output must be a JSON object that includes 1. steps for generating the strategy  " # 2. strategy it self : strategy_type, assets, lookback_days, indicators, "evaluation_metrics, and next_steps."
-        
-    # )
     system_prompt = f"""
 You are a quantitative finance assistant.
 
@@ -52,7 +46,9 @@ Your task is to analyze the user's finance-related question:
 ---
 
 **Instructions:**
-- Do NOT generate a full strategy or code yet, although in the end of all steps I shuold get 1. code to test my strategy 2.strategy it self : strategy_type, assets, lookback_days, indicators, evaluation_metrics, and next_steps.
+- Do NOT generate a full strategy or code yet, although in the end of all steps I should get
+  1. code to test my strategy
+  2. strategy itself: strategy_type, assets, lookback_days, indicators, evaluation_metrics, and next_steps.
 - Break the problem down into a step-by-step decision-making plan.
 - For each step, explain the reasoning.
 - Output strictly in JSON format.
@@ -81,32 +77,49 @@ Your task is to analyze the user's finance-related question:
   ]
 }}
 """.strip()
-    
 
     user_prompt = f"Question: {finance_question}\n\nPlease respond in valid JSON format only."
 
     try:
-        response = openai.chat.completions.create(
-            model=llm_model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.7
-        )
+        if llm_model == "gpt-4o":
+            response = openai.chat.completions.create(
+                model=llm_model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.7
+            )
+        elif llm_model == "deepseek-chat":
+            load_dotenv()
+            deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
+            client = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
+
+            response = client.chat.completions.create(
+                model="deepseek-chat",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.7
+            )
+        else:
+            raise ValueError(f"Unsupported model: {llm_model}")
+
         print("\n" + "=" * 60)
         print("🚀 **Execution Make you rich today Strategy** 🚀")
-        print("\n" + "=" * 60)
+        print("=" * 60)
         print("System prompt")
         print(system_prompt)
-        print("\n" + "=" * 60)
+        print("=" * 60)
         print("User prompt")
         print(user_prompt)
+
         content = response.choices[0].message.content.strip()
 
         # Clean up triple backticks if included
         if content.startswith("```") and content.endswith("```"):
-            content = content[content.find('\n')+1 : content.rfind('```')].strip()
+            content = content[content.find('\n') + 1: content.rfind('```')].strip()
 
         print(f"[DEBUG] GPT Response:\n{content}")
 
@@ -116,6 +129,7 @@ Your task is to analyze the user's finance-related question:
     except Exception as e:
         print(f"[ERROR] Failed to get strategy plan from GPT: {e}")
         return None
+
     
 if __name__ == "__main__":
     question = "What's a good momentum trading strategy for APPL over the past week?"
