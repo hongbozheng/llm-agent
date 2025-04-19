@@ -12,8 +12,21 @@ import json
 import re
 load_dotenv()
 from openai import OpenAI # for deepseek
+import google.generativeai as genai# Add Gemini import
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") # <-- Get Google API Key
+
+# --- Configure Gemini ---
+if GOOGLE_API_KEY:
+    try:
+        genai.configure(api_key=GOOGLE_API_KEY)
+        print("[INFO] Gemini API configured successfully.")
+    except Exception as e:
+        print(f"[WARN] Failed to configure Gemini API: {e}")
+else:
+    print("[WARN] GOOGLE_API_KEY not found in .env file. Gemini models will not be available.")
+# -----------------------
 def sanitize_prompt_for_filename(prompt: str) -> str:
     """
     Converts a prompt string into a safe filename by:
@@ -31,7 +44,7 @@ def sanitize_prompt_for_filename(prompt: str) -> str:
 
 def ask_gpt_for_strategy_step(
     finance_question: str,
-    llm_model: str = "gpt-4o"
+    llm_model: str 
 ):
     """
     Ask GPT a finance-related question and get back a structured JSON strategy plan.
@@ -103,6 +116,29 @@ Your task is to analyze the user's finance-related question:
                 ],
                 temperature=0.7
             )
+        elif llm_model.startswith("gemini"): # Allows for "gemini-pro", "gemini-1.5-pro", etc.
+            print(f"[INFO] Calling Gemini model: {llm_model}")
+            if not GOOGLE_API_KEY:
+                raise ValueError("GOOGLE_API_KEY not found or Gemini API not configured.")
+            # Combine prompts for Gemini's generate_content (simpler API)
+            full_prompt = f"{system_prompt}\n\n---\n\n{user_prompt}"
+            model = genai.GenerativeModel(llm_model)
+            # Optional: Add safety settings if needed
+            # safety_settings=[...]
+            response = model.generate_content(
+                full_prompt,
+                generation_config=genai.types.GenerationConfig(
+                    # Ensure Gemini outputs JSON
+                    # response_mime_type="application/json", # Use if model supports enforced JSON
+                    temperature=0.7
+                )
+                # safety_settings=safety_settings
+            )
+            # Check for blocked response
+            if not response.candidates:
+                 raise ValueError(f"Gemini response was blocked. Prompt feedback: {response.prompt_feedback}")
+            content = response.text.strip()
+        # ---------------------------
         else:
             raise ValueError(f"Unsupported model: {llm_model}")
 
@@ -115,11 +151,23 @@ Your task is to analyze the user's finance-related question:
         print("User prompt")
         print(user_prompt)
 
-        content = response.choices[0].message.content.strip()
+        # content = response.choices[0].message.content.strip()
 
-        # Clean up triple backticks if included
-        if content.startswith("```") and content.endswith("```"):
-            content = content[content.find('\n') + 1: content.rfind('```')].strip()
+        # # Clean up triple backticks if included
+        # if content.startswith("```") and content.endswith("```"):
+        #     content = content[content.find('\n') + 1: content.rfind('```')].strip()
+
+        if llm_model.startswith("gemini"):
+    
+            content = response.text.strip()  
+            if content.startswith("```json"):
+                content = content[len("```json"):].strip()
+            if content.endswith("```"):
+                content = content[:-3].strip()
+        elif llm_model.startswith("gpt"):
+            content = response.choices[0].message.content.strip()
+            if content.startswith("```") and content.endswith("```"):
+                content = content[content.find('\n') + 1: content.rfind('```')].strip()
 
         print(f"[DEBUG] GPT Response:\n{content}")
 
@@ -132,8 +180,9 @@ Your task is to analyze the user's finance-related question:
 
     
 if __name__ == "__main__":
+    llm_model = "gemini-1.5-flash" #option gpt-4o, deepseek-chat,gemini-pro,gemini-1.5-flash
     question = "What's a good momentum trading strategy for APPL over the past week?"
-    result = ask_gpt_for_strategy_step(question)
+    result = ask_gpt_for_strategy_step(question,llm_model)
     time.sleep(10)
     if result:
         print("[INFO] Strategy Plan:")
@@ -141,7 +190,7 @@ if __name__ == "__main__":
         print(pretty_json)
 
         safe_prompt = sanitize_prompt_for_filename(question)
-        filename = f"strategy_plan_{safe_prompt}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        filename = f"strategy_plan_{llm_model}_{safe_prompt}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         save_path = os.path.join("step_outputs", filename)
 
         # Ensure the output folder exists
@@ -151,4 +200,3 @@ if __name__ == "__main__":
             f.write(pretty_json)
 
         print(f"[INFO] Saved strategy plan to: {save_path}")
-
