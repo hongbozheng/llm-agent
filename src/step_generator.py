@@ -146,10 +146,10 @@ Your task is to analyze the user's finance-related question:
         print("🚀 **Execution Make you rich today Strategy** 🚀")
         print("=" * 60)
         print("System prompt")
-        print(system_prompt)
+        # print(system_prompt)
         print("=" * 60)
         print("User prompt")
-        print(user_prompt)
+        # print(user_prompt)
 
         # content = response.choices[0].message.content.strip()
 
@@ -169,7 +169,7 @@ Your task is to analyze the user's finance-related question:
             if content.startswith("```") and content.endswith("```"):
                 content = content[content.find('\n') + 1: content.rfind('```')].strip()
 
-        print(f"[DEBUG] GPT Response:\n{content}")
+        # print(f"[DEBUG] LLM Response:\n{content}")
 
         strategy_plan = json.loads(content)
         return strategy_plan

@@ -44,7 +44,8 @@ def main(args):
             print(f"[INFO] Saved strategy plan to: {save_path}")
     elif  args.step == "full_pipeline":
         # procedure 1 : generate step 
-        result = ask_gpt_for_strategy_step(args.question)
+        agent_model = args.llm_model
+        result = ask_gpt_for_strategy_step(args.question,llm_model = agent_model)
         time.sleep(10)
         if result:
             print("[INFO] Strategy Plan:")
@@ -52,7 +53,7 @@ def main(args):
             print(pretty_json)
 
             safe_prompt = sanitize_prompt_for_filename(args.question)
-            filename = f"strategy_plan_{safe_prompt}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            filename = f"strategy_plan_{agent_model}_{safe_prompt}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
             save_path = os.path.join("outputs", filename)
 
             # Ensure the output folder exists
@@ -104,7 +105,7 @@ if __name__ == "__main__":
         "generate_step", "evaluate_initial", "full_pipeline","compare_agents"
     ], required=True)    
     # gpt-4o , deepseek-chat
-    parser.add_argument("--llm_model", type=str, default="gpt-4o", help="The LLM model to use (e.g., gpt-4o, deepseek-chat).")
+    parser.add_argument("--llm_model", type=str, default="gpt-4o", help="The LLM model to use (e.g., gpt-4o, deepseek-chat, gemini-1.5-flash).")
 
     parser.add_argument("--question", type=str, required=True, help="The finance question to generate a strategy plan for.")
     args = parser.parse_args()

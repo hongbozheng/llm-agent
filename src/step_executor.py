@@ -56,6 +56,12 @@ Current step:
 Please generate Python code that completes this step, based on all context so far.
 Respond ONLY with a code block.
 """.strip()
+    if step_index == len(plan["steps"]) - 1:
+        system_prompt += (
+            "\n\nAt the end of this step, please output a Python dictionary called `strategy_info` "
+            "with the following fields: strategy_type, assets, lookback_days, indicators, evaluation_metrics."
+            "\nRespond only with a code block as before."
+        )
     if llm_model == "gpt-4o":
         response = openai.chat.completions.create(
             model=llm_model,
@@ -155,6 +161,10 @@ def run_strategy_steps(plan_path, llm_model):
                 # exec_globals = {}
                 exec(code, exec_globals)
                 print(f"[SUCCESS] Executed step {i} successfully.")
+                strategy_info = exec_globals.get("strategy_info")
+                if strategy_info:
+                    step["strategy_info"] = strategy_info
+                    print(f"[INFO] Extracted strategy_info from step {i}.")
             except Exception as e:
                 print(f"[ERROR] Code execution failed at step {i}: {e}")
 
@@ -175,11 +185,15 @@ def run_strategy_steps(plan_path, llm_model):
             with open(output_path, "r") as f:
                 code = f.read()
 
-        summary["steps"].append({
+        summary_step = {
             "step": step["step"],
             "reasoning": step["reasoning"],
             "code": code
-        })
+        }
+        if "strategy_info" in step:
+            summary_step["strategy_info"] = step["strategy_info"]
+
+        summary["steps"].append(summary_step)
 
     # Save summary
     os.makedirs("summaries", exist_ok=True)

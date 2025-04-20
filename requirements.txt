@@ -9,3 +9,4 @@ TA-Lib
 backtrader
 scikit-learn
 plotly
+google-generativeai
