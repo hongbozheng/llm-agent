@@ -7,10 +7,27 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from datetime import datetime
 
+import google.generativeai as genai
+
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")  # <-- Get Google API Key
 
-def ask_gpt_to_execute_step_with_files(plan, step_index, output_file_paths, llm_model): # gpt-4o , deepseek-chat
+# --- Configure Gemini ---
+if GOOGLE_API_KEY:
+    try:
+        genai.configure(api_key=GOOGLE_API_KEY)
+        print("[INFO] Gemini API configured successfully.")
+    except Exception as e:
+        print(f"[WARN] Failed to configure Gemini API: {e}")
+else:
+    print(
+        "[WARN] GOOGLE_API_KEY not found in .env file. Gemini models will not be available.")
+
+
+# -----------------------
+def ask_gpt_to_execute_step_with_files(plan, step_index, output_file_paths,
+                                       llm_model):  # gpt-4o , deepseek-chat
     question = plan["question"]
     current_step = plan["steps"][step_index]
 
@@ -48,35 +65,70 @@ Respond ONLY with a code block.
     elif llm_model == "deepseek-chat":
         load_dotenv()
         deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
-        client = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
+        client = OpenAI(api_key=deepseek_api_key,
+                        base_url="https://api.deepseek.com")
 
         response = client.chat.completions.create(
             model="deepseek-chat",
             messages=[
                 {"role": "system", "content": system_prompt},
-                
+
             ],
             stream=False
         )
-    content = response.choices[0].message.content.strip()
+    elif llm_model.startswith("gemini"):
+        print(f"[INFO] Calling Gemini model: {llm_model}")
+        if not GOOGLE_API_KEY:
+            raise ValueError(
+                "GOOGLE_API_KEY not found or Gemini API not configured.")
+
+        # Gemini uses only one prompt string
+        full_prompt = system_prompt
+        model = genai.GenerativeModel(llm_model)
+        response = model.generate_content(
+            full_prompt,
+            generation_config=genai.types.GenerationConfig(
+                temperature=0.7
+            )
+        )
+
+        if not response.candidates:
+            raise ValueError(
+                f"Gemini response was blocked. Prompt feedback: {response.prompt_feedback}")
+
+    if llm_model.startswith("gemini"):
+        content = response.text.strip()
+        if content.startswith("```json"):
+            content = content[len("```json"):].strip()
+        if content.startswith("```python"):
+            content = content[len("```python"):].strip()
+        if content.endswith("```"):
+            content = content[:-3].strip()
+    elif llm_model.startswith("gpt") or llm_model.startswith("deepseek"):
+        content = response.choices[0].message.content.strip()
+        if content.startswith("```") and content.endswith("```"):
+            content = content[
+                      content.find('\n') + 1: content.rfind('```')].strip()
+
     match = re.search(r"```python(.*?)```", content, re.DOTALL)
     return match.group(1).strip() if match else content
 
 
-def run_strategy_steps(plan_path,llm_model):
+def run_strategy_steps(plan_path, llm_model):
     with open(plan_path, "r") as f:
         plan = json.load(f)
 
     step_outputs = []
     steps = plan.get("steps", [])
-    exec_globals = {} 
+    exec_globals = {}
     for i, step in enumerate(steps):
         print(f"\n==============================")
         print(f"🔧 Executing Step {i}: {step['step']}")
         print(f"==============================")
 
         # Ask GPT with context from previous step output files
-        code = ask_gpt_to_execute_step_with_files(plan, i, step_outputs,llm_model)
+        code = ask_gpt_to_execute_step_with_files(plan, i, step_outputs,
+                                                  llm_model)
 
         if code:
             # output_path = f"step/step_{i:02d}_output.py"
@@ -93,7 +145,6 @@ def run_strategy_steps(plan_path,llm_model):
                 f.write(code)
 
             print(f"[INFO] Saved step {i} output to: {output_path}")
-
 
             # Store file path for use in next step context
             step_outputs.append(output_path)
@@ -142,6 +193,7 @@ def run_strategy_steps(plan_path,llm_model):
     print(f"\n✅ [INFO] Full summary saved to: {summary_path}")
     return summary_path
 
+
 # Helper for comparing LLM results
 def compare_strategy_summaries(summary_path_1, summary_path_2, question):
     # Load both summaries
@@ -155,7 +207,7 @@ def compare_strategy_summaries(summary_path_1, summary_path_2, question):
         result = f"### Strategy from {label}\n"
         result += f"**Question**: {summary['question']}\n\n"
         for i, step in enumerate(summary["steps"]):
-            result += f"**Step {i+1}: {step['step']}**\n"
+            result += f"**Step {i + 1}: {step['step']}**\n"
             result += f"- Reasoning: {step['reasoning']}\n"
             result += f"- Code:\n```\n{step['code']}\n```\n\n"
         return result
@@ -208,8 +260,8 @@ Instructions:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--plan", required=True, help="Path to strategy plan JSON")
+    parser.add_argument("--plan", required=True,
+                        help="Path to strategy plan JSON")
     args = parser.parse_args()
-    llm_model_choice = "deepseek-chat" # gpt-4o , deepseek-chat
-    run_strategy_steps(args.plan,llm_model_choice)
-
+    llm_model_choice = "deepseek-chat"  # gpt-4o , deepseek-chat
+    run_strategy_steps(args.plan, llm_model_choice)
