@@ -1,4 +1,5 @@
-**/.env
-**/.DS_Store
+.idea/
+env/
+.DS_Store
 # Ignore Python virtual environment
 venv/
