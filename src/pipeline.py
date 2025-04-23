@@ -110,5 +110,5 @@ if __name__ == "__main__":
     parser.add_argument("--question", type=str, required=True, help="The finance question to generate a strategy plan for.")
     args = parser.parse_args()
     main(args)
-# python3 src/pipeline.py   --step full_pipeline   --llm_model gpt-4o   --question "What's a good momentum strategy for TSLA over the past 3 months?"
+# python3 src/pipeline.py   --step full_pipeline   --llm_model gpt-4o   --question "What's a good strategy for MAXN for the next 1 months?"
 # python3 src/pipeline.py   --step compare_agents   --llm_model gpt-4o   --question "What's a good momentum strategy for TSLA over the past 3 months?"

@@ -6,7 +6,7 @@ import openai
 from dotenv import load_dotenv
 from openai import OpenAI
 from datetime import datetime
-
+from config_data.rule import get_rule_prompt_text
 import google.generativeai as genai
 
 load_dotenv()
@@ -29,7 +29,7 @@ else:
 def ask_gpt_to_execute_step_with_files(plan, step_index, output_file_paths,
                                        llm_model):  # gpt-4o , deepseek-chat
     question = plan["question"]
-    current_step = plan["steps"][step_index]
+    current_step = plan["steps"][step_index]     
 
     prev_context = []
     for i, path in enumerate(output_file_paths):
@@ -56,6 +56,12 @@ Current step:
 Please generate Python code that completes this step, based on all context so far.
 Respond ONLY with a code block.
 """.strip()
+    # Error code correction
+    system_prompt += (
+    "\n\n# 📌 Common Errors to Avoid:\n"
+    + get_rule_prompt_text()
+    )
+
     if step_index == len(plan["steps"]) - 1:
         system_prompt += (
             "\n\nAt the end of this step, please output a Python dictionary called `strategy_info` "
