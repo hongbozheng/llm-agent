@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from datetime import datetime
 from config_data.rule import get_rule_prompt_text
+from auto_fix_code import execute_with_auto_fix_threaded
+
 import google.generativeai as genai
 
 load_dotenv()
@@ -162,17 +164,25 @@ def run_strategy_steps(plan_path, llm_model):
             step_outputs.append(output_path)
             step["gpt_output_file"] = output_path
 
-            # Try executing the generated code
-            try:
-                # exec_globals = {}
-                exec(code, exec_globals)
-                print(f"[SUCCESS] Executed step {i} successfully.")
+            # Old version without auto fix !!!Try executing the generated code
+            # try:
+            #     # exec_globals = {}
+            #     exec(code, exec_globals)
+            #     print(f"[SUCCESS] Executed step {i} successfully.")
+            #     strategy_info = exec_globals.get("strategy_info")
+            #     if strategy_info:
+            #         step["strategy_info"] = strategy_info
+            #         print(f"[INFO] Extracted strategy_info from step {i}.")
+            # except Exception as e:
+            #     print(f"[ERROR] Code execution failed at step {i}: {e}")
+            success, final_code, last_error = execute_with_auto_fix_threaded(code, plan, i, llm_model, exec_globals)
+            if success:
                 strategy_info = exec_globals.get("strategy_info")
                 if strategy_info:
                     step["strategy_info"] = strategy_info
-                    print(f"[INFO] Extracted strategy_info from step {i}.")
-            except Exception as e:
-                print(f"[ERROR] Code execution failed at step {i}: {e}")
+            else:
+                print(f"[🚫] Final execution failed for step {i}. after Auto Fix Error:")
+                print(last_error)
 
     # Update plan with new gpt_output_file entries
     # with open(plan_path, "w") as f:
