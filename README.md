@@ -2,19 +2,24 @@
 
 ## 🧠 Project Overview
 
-This project is a fully autonomous AI-powered Quant Developer Assistant. It enables users—such as retail investors, quant researchers, and finance students—to generate, execute, and evaluate algorithmic trading strategies by simply asking natural language questions.
+This project is a fully autonomous AI-powered Quant Developer Assistant. It
+enables users—such as retail investors, quant researchers, and finance
+students—to generate, execute, and evaluate algorithmic trading strategies by
+simply asking natural language questions.
 
 > Example:
 > **"What's a good momentum strategy for TSLA over the past 3 months?"**
 
-The system returns a step-by-step strategy plan, generates code, executes it, performs backtests on historical data, and outputs a full evaluation summary.
+The system returns a step-by-step strategy plan, generates code, executes it,
+performs backtests on historical data, and outputs a full evaluation summary.
 
 ---
 
 ## 🚀 Key Features
 
 ### ✅ GPT-Orchestrated Strategy Planning
-- LLM generates a JSON plan detailing asset, indicators, timeframe, evaluation metrics, and task sequence
+- LLM generates a JSON plan detailing asset, indicators, timeframe, evaluation
+- metrics, and task sequence
 
 ### ✅ Code Generation & Automated Execution
 - Each step is translated into Python code and auto-executed
@@ -39,17 +44,25 @@ The system returns a step-by-step strategy plan, generates code, executes it, pe
 ## 📂 Project Structure
 ```
 src/
-├── pipeline.py            # CLI entrypoint: generate → execute → compare
-├── step_generator.py      # Uses LLM to generate step plans
-├── step_executor.py       # Executes and evaluates each step
-├── autofix.py             # Threaded error handler + code fixer
+├── logger.py               # format logging
+├── main.py                 # CLI entrypoint: generate → execute → compare
+├── step_generator.py       # Uses LLM to generate strategy plans
+├── step_executor.py        # Executes and evaluates each step
+├── autofix.py              # Threaded error handler + code fixer
+├── utils.py                # utility functions
 ├── config_data/
-│   └── rule.py            # Contains common error rules for LLM prompting
-summaries/                 # Final results for each strategy
-outputs/                   # Raw step outputs
+│   └── rule.py             # Contains common error rules for LLM prompting
+strategy/                   # Saved strategy
+summaries/                  # Final results for each strategy
 
-```              
+```
 ## 🚀 How to Run
+
+### Create virtual environment
+
+```
+python3 -m venv hft
+```
 
 ### Install dependencies
 
@@ -60,11 +73,22 @@ pip install -r requirements.txt
 ### Generate + Execute Strategy Plan
 
 ``` python
-python3 src/pipeline.py \
-  --step full_pipeline \
-  --llm_model gpt-4o \
-  --question "What's a good strategy for MAXN in the next 30 days?" 
-  ``` 
+python3 src/main.py -m <llm> -p <prompt> -f <file_path> 
+```
+
+- `<llm>` - LLM to use (e.g. GPT-4o, Gemini, Deepseek, etc)
+- `<prompt>` - prompt to generate a strategy plan for
+- `<file_path>` - generated strategy plan file path
+
+Example command line inputs.
+```
+python3 main.py -m gpt-4o -p What's a good strategy for NVDA in the next 30 days?
+```
+
+```
+python3 main.py -m gpt-4o -f strategy/strategy_gpt-4o_What's_a_good_strategy_for_NVDA_in_the_next_30_days_20250425_172847.json
+```
+
 ## 👥 Team Members
 
 **Hanxi Fang**
