@@ -67,10 +67,35 @@ python3 src/pipeline.py \
   ``` 
 ## 👥 Team Members
 
-Hanqi Mao – hanqim2@illinois.edu
+**Hanxi Fang**
 
-Hanxi Fang – hanxif2@illinois.edu
+Email: hanxif2@illinois.edu
 
-Hongbo Zheng – hongboz2@illinois.edu
+LinkedIn:
 
-Dadong Peng – dadongp2@illinois.edu
+**Hanqi Mao**
+
+Email: hanqim2@illinois.edu
+
+LinkedIn:
+
+**Dadong Peng**
+
+Email: dadongp2@illinois.edu
+
+LinkedIn: 
+
+**Hongbo Zheng**
+
+Email: hongboz2@illinois.edu
+
+LinkedIn: https://www.linkedin.com/in/hongbo-zheng-b088581b6/
+
+Hongbo Zheng is a master’s student in Computer Science at the University of
+Illinois Urbana-Champaign (UIUC). With a background in electrical engineering
+and computer science, his interests lie in designing efficient machine learning
+algorithms for vision and language models, with applications spanning domains
+such as healthcare and autonomous systems. He is particularly passionate about
+developing robust large language model (LLM) agents for diverse real-world
+applications, including high-frequency trading, automated reasoning, and
+decision-making systems.
