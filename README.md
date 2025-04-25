@@ -77,13 +77,17 @@ LinkedIn:
 
 Email: hanqim2@illinois.edu
 
-LinkedIn:
+LinkedIn: https://www.linkedin.com/in/hanqi-mao-a1251b2bb/
+
+Hanqi Mao is an undergraduate student in Computer Science at the University of Illinois Urbana-Champaign (UIUC), with a strong academic background and research experience in machine learning and system programming. His work focuses on building practical and efficient AI systems, particularly in large language models (LLMs), computer vision, and real-time applications. He has contributed to projects involving medical image generation using diffusion models, LLM-integrated weather applications, and bias mitigation in text-to-image systems. Passionate about interdisciplinary innovation, Hanqi is exploring applications of LLM agents in domains such as recommendation systems, automated decision-making, and user-interactive platforms.
 
 **Dadong Peng**
 
 Email: dadongp2@illinois.edu
 
-LinkedIn: 
+LinkedIn: https://www.linkedin.com/in/dadong-peng-50618619b/
+
+I'm Dadong Peng, PhD candidate in Mathematics, graph theory. With multiple years experience in gto poker, machine learning, data management, R & python programming, database and optimization. I had internship at Aviatrix in 2023 and received full-time sde offer from Huawei in 2024. now I turned my interest in trading cash equities and cryptocurrencies, especially in building LLM-based auto trading system.
 
 **Hongbo Zheng**
 
