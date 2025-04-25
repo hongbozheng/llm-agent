@@ -99,6 +99,8 @@ LinkedIn:
 
 **Hanqi Mao**
 
+<img src="photos/andy_image.png" alt="Andy Image" width="200"/><br/>
+
 Email: hanqim2@illinois.edu
 
 LinkedIn: https://www.linkedin.com/in/hanqi-mao-a1251b2bb/
