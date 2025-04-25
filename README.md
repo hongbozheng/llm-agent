@@ -99,7 +99,7 @@ LinkedIn:
 
 **Hanqi Mao**
 
-<img src="photos/andy_image.png" alt="Andy Image" width="200"/><br/>
+<img src="assets/andy_image.png" alt="Andy Image" width="200"/><br/>
 
 Email: hanqim2@illinois.edu
 
@@ -116,6 +116,8 @@ LinkedIn: https://www.linkedin.com/in/dadong-peng-50618619b/
 I'm Dadong Peng, PhD candidate in Mathematics, graph theory. With multiple years experience in gto poker, machine learning, data management, R & python programming, database and optimization. I had internship at Aviatrix in 2023 and received full-time sde offer from Huawei in 2024. now I turned my interest in trading cash equities and cryptocurrencies, especially in building LLM-based auto trading system.
 
 **Hongbo Zheng**
+
+<img src="assets/hongbo.jpeg" alt="icon" width="135"/><br/>
 
 Email: hongboz2@illinois.edu
 
