@@ -3,7 +3,7 @@ from llm_client import call_llm
 from logger import log_prompt
 
 
-def generate_strategy(llm: str, prompt: str):
+def generate_strategy(llm: str, prompt: str, temp: float) -> str:
     """
     Ask GPT a finance-related question and get back a structured JSON strategy plan.
     """
@@ -53,7 +53,7 @@ Your task is to analyze the user's finance-related question:
 
     log_prompt(sys_prompt, usr_prompt)
 
-    content = call_llm(llm, sys_prompt, usr_prompt, temp=0.7)
+    content = call_llm(llm, sys_prompt, usr_prompt, temp)
 
     if llm == "gpt-4o" or llm == "deepseek":
         if content.startswith("```") and content.endswith("```"):

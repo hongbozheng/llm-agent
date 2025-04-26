@@ -10,6 +10,7 @@ from utils import check_api_keys, sanitize_for_filename
 
 def main(args):
     llm = args.llm
+    temp = args.temperature
     prompt = args.prompt
     file_path = args.file_path
 
@@ -23,14 +24,12 @@ def main(args):
     os.makedirs("strategy", exist_ok=True)
 
     if prompt is not None:
-        strategy = generate_strategy(llm, prompt)
-        if strategy is None:
-            exit(1)
+        strategy = generate_strategy(llm, prompt, temp)
 
         strategy = json.dumps(strategy, indent=2)
 
         p = sanitize_for_filename(prompt)
-        filename = f"strategy-{llm}-{p}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        filename = f"strategy-{llm}-{p}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
         file_path = os.path.join("strategy", filename)
         file = open(file_path, 'w')
         file.write(strategy)
@@ -40,8 +39,8 @@ def main(args):
     strategy = json.load(file)
     file.close()
     log_strategy(json.dumps(strategy, indent=2))
-    exit(0)
-    exec_strategy(llm, file_path)
+
+    exec_strategy(llm, temp, file_path)
 
     # elif args.step == "compare_agents":
     #     summary_paths = []
@@ -86,6 +85,14 @@ if __name__ == "__main__":
         choices=["gpt-4o", "deepseek", "gemini"],
         required=True,
         help="The LLM to use.",
+    )
+    parser.add_argument(
+        "--temperature",
+        "-t",
+        type=float,
+        default=0.5,
+        required=False,
+        help="LLM response randomness.",
     )
     parser.add_argument(
         "--prompt",

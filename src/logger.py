@@ -48,3 +48,11 @@ def log_prompt(sys_prompt: str, usr_prompt: str) -> None:
     log("=" * 75)
 
     return
+
+
+def log_step(i: int, step: str) -> None:
+    log("=" * 75)
+    log(f"🛠️ Executing Step {i} {step}")
+    log("-" * 75)
+
+    return
