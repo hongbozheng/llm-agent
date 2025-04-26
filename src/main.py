@@ -1,16 +1,10 @@
 import argparse
 import json
-import openai
 import os
-import time
-
-from dotenv import load_dotenv
-from logger import log, log_usr_input, log_strategy
-from step_generator import generate_strategy
-# from step_executor import ask_gpt_to_execute_step_with_files
-from step_executor import run_strategy_steps
-from step_executor import compare_strategy_summaries
 from datetime import datetime
+from logger import log, log_strategy, log_usr_input
+from step_executor import exec_strategy
+from step_generator import generate_strategy
 from utils import check_api_keys, sanitize_for_filename
 
 
@@ -36,9 +30,9 @@ def main(args):
         strategy = json.dumps(strategy, indent=2)
 
         p = sanitize_for_filename(prompt)
-        filename = f"strategy_{llm}_{p}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        filename = f"strategy-{llm}-{p}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         file_path = os.path.join("strategy", filename)
-        file = open(file_path, "w")
+        file = open(file_path, 'w')
         file.write(strategy)
         file.close()
 
@@ -46,47 +40,9 @@ def main(args):
     strategy = json.load(file)
     file.close()
     log_strategy(json.dumps(strategy, indent=2))
-
     exit(0)
-    run_strategy_steps(file_path, args.llm_model)
+    exec_strategy(llm, file_path)
 
-    # if step == "generate_step":
-    #     result = ask_for_strategy(args.question)
-    #     time.sleep(10)
-    #     if result:
-    #         print("[INFO] Strategy Plan:")
-    #         pretty_json = json.dumps(result, indent=2)
-    #         print(pretty_json)
-    #
-    #         safe_prompt = sanitize_prompt_for_filename(args.question)
-    #         filename = f"strategy_plan_{safe_prompt}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    #         save_path = os.path.join("outputs", filename)
-    #
-    #         # Ensure the output folder exists
-    #         os.makedirs("outputs", exist_ok=True)
-    #
-    #         with open(save_path, "w") as f:
-    #             f.write(pretty_json)
-    #
-    #         print(f"[INFO] Saved strategy plan to: {save_path}")
-    # elif step == "full_pipeline":
-    #     # procedure 1 : generate step
-    #     strategy = ask_for_strategy(question, llm)
-    #
-    #     prompt = sanitize_for_filename(question)
-    #     filename = f"strategy_{llm}_{prompt}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    #     save_path = os.path.join("outputs", filename)
-    #
-    #     # Ensure the output folder exists
-    #     os.makedirs("outputs", exist_ok=True)
-    #
-    #     with open(save_path, "w") as f:
-    #         f.write(strategy)
-    #
-    #     print(f"[INFO] Saved strategy plan to: {save_path}")
-    #     # procedure 2: generate step code and execute
-    #     run_strategy_steps(save_path,args.llm_model)
-    #
     # elif args.step == "compare_agents":
     #     summary_paths = []
     #     for agent_model in ["gpt-4o", "deepseek-chat"]:
@@ -149,6 +105,3 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     main(args)
-
-# python3 src/pipeline.py -s compare_agents -m gpt-4o -q "What's a good momentum strategy for TSLA over the past 3 months?"
-# python3 src/pipeline.py -s full_pipeline -m gpt-4o -q "What's a good strategy for NVDA for the next 1 months?"
