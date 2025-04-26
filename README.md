@@ -133,6 +133,7 @@ algorithms for vision and language models, with applications spanning domains
 such as healthcare and autonomous systems. He is particularly passionate about
 developing robust large language model (LLM) agents for diverse real-world
 applications, including high-frequency trading, automated reasoning, and
-decision-making systems. I am actively seeking internship or full-time
-opportunities as a Machine Learning Engineer (MLE) or AI Software Engineer, with
-a strong focus on building intelligent systems and LLM-driven agents.
+decision-making systems. Hongbo is actively seeking internship or full-time
+opportunities for Fall 2025 as a Research Scientist, as a Research Scientist,
+Machine Learning Engineer (MLE), or AI Software Engineer, with a particular
+focus on building intelligent systems and LLM-driven agents.
