@@ -56,3 +56,7 @@ def log_step(i: int, step: str) -> None:
     log("-" * 75)
 
     return
+
+def log_output(output: str) -> None:
+    for line in output.splitlines():
+        log(line)

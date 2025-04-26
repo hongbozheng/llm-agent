@@ -11,6 +11,8 @@ from utils import check_api_keys, sanitize_for_filename
 def main(args):
     llm = args.llm
     temp = args.temperature
+    timeout = args.timeout
+    max_att = args.attempt
     prompt = args.prompt
     file_path = args.file_path
 
@@ -31,16 +33,16 @@ def main(args):
         p = sanitize_for_filename(prompt)
         filename = f"strategy-{llm}-{p}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
         file_path = os.path.join("strategy", filename)
-        file = open(file_path, 'w')
-        file.write(strategy)
-        file.close()
+        f = open(file_path, 'w')
+        f.write(strategy)
+        f.close()
 
-    file = open(file_path, 'r')
-    strategy = json.load(file)
-    file.close()
+    f = open(file_path, 'r')
+    strategy = json.load(f)
+    f.close()
     log_strategy(json.dumps(strategy, indent=2))
 
-    exec_strategy(llm, temp, file_path)
+    exec_strategy(llm, temp, timeout, max_att, file_path)
 
     # elif args.step == "compare_agents":
     #     summary_paths = []
@@ -88,11 +90,27 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--temperature",
-        "-t",
+        "-r",
         type=float,
         default=0.5,
         required=False,
         help="LLM response randomness.",
+    )
+    parser.add_argument(
+        "--timeout",
+        "-t",
+        type=int,
+        default=60,
+        required=False,
+        help="Timeout for code execution.",
+    )
+    parser.add_argument(
+        "--attempt",
+        "-a",
+        type=int,
+        default=5,
+        required=False,
+        help="Number of attempts to fix the code.",
     )
     parser.add_argument(
         "--prompt",
