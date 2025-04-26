@@ -109,11 +109,14 @@ Hanqi Mao is an undergraduate student in Computer Science at the University of I
 
 **Dadong Peng**
 
+<img src="assets/dadong_peng.jpeg" alt="dadong Image" width="200"/><br/>
+
 Email: dadongp2@illinois.edu
 
 LinkedIn: https://www.linkedin.com/in/dadong-peng-50618619b/
 
-I'm Dadong Peng, PhD candidate in Mathematics, graph theory. With multiple years experience in gto poker, machine learning, data management, R & python programming, database and optimization. I had internship at Aviatrix in 2023 and received full-time sde offer from Huawei in 2024. now I turned my interest in trading cash equities and cryptocurrencies, especially in building LLM-based auto trading system.
+I'm Dadong Peng, PhD candidate in Mathematics, graph theory. With multiple years experience in gto poker, machine learning, data management, R & python programming, database and optimization. I had internship at Aviatrix in 2023 and received full-time sde offer from Huawei in 2024. Now I turned my interest in trading cash equities and cryptocurrencies, especially in building LLM-based auto trading system. I'm looking for an intership or full time position of quantitative trader/researcher or investment analyst before my graduation in early 2026.
+
 
 **Hongbo Zheng**
 
