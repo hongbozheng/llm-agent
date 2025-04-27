@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 from datetime import datetime
-from logger import log, log_strategy, log_usr_input
+from logger import log, log_convo, log_strategy, log_usr_input
 from step_executor import exec_strategy
 from step_generator import generate_strategy
 from utils import check_api_keys, sanitize_for_filename
@@ -17,22 +17,28 @@ def main(args):
     file_path = args.file_path
 
     if (file_path is None and prompt is None) or (file_path and prompt):
-        log(f"❌ [ERROR] Please specify exactly one of --file_path or --question")
+        log(f"❌ [ERROR] Please specify exactly one of --file_path or --prompt")
         exit(1)
 
     log_usr_input(llm, prompt, file_path)
     check_api_keys(llm)
 
-    os.makedirs("strategy", exist_ok=True)
+    convo = {"llm": llm, "temp": temp, "timeout": timeout, "max_att": max_att}
+
+    time = datetime.now().strftime('%Y%m%d-%H%M%S')
+    path = "strategy"
+    os.makedirs(path, exist_ok=True)
 
     if prompt is not None:
-        strategy = generate_strategy(llm, prompt, temp)
+        convo["prompt"] = prompt
 
-        strategy = json.dumps(strategy, indent=2)
+        c = generate_strategy(llm, prompt, temp)
+        convo.update(c)
+        strategy = convo['generate-strategy']['llm-response']
 
         p = sanitize_for_filename(prompt)
-        filename = f"strategy-{llm}-{p}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
-        file_path = os.path.join("strategy", filename)
+        filename = f"strategy-{llm}-{p}-{time}.json"
+        file_path = os.path.join(path, filename)
         f = open(file_path, 'w')
         f.write(strategy)
         f.close()
@@ -42,7 +48,10 @@ def main(args):
     f.close()
     log_strategy(json.dumps(strategy, indent=2))
 
-    exec_strategy(llm, temp, timeout, max_att, file_path)
+    c = exec_strategy(llm, temp, timeout, max_att, file_path)
+    convo.update(c)
+
+    log_convo(convo, time)
 
     # elif args.step == "compare_agents":
     #     summary_paths = []

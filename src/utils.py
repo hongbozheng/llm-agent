@@ -45,7 +45,7 @@ def sanitize_for_filename(prompt: str) -> str:
     - Removing or replacing unsafe characters
     """
     # Replace all whitespace with underscores
-    safe = re.sub(r'\s+', '_', prompt.strip())
+    safe = re.sub(r'\s+', '-', prompt.strip())
 
     # Remove characters unsafe for filenames
     safe = re.sub(r'[<>:"/\\|?*]', '', safe)

@@ -79,7 +79,16 @@ indicators, evaluation_metrics. \nRespond only with a code block as before.
             content = content[:-3].strip()
 
     match = re.search(r"```python(.*?)```", content, re.DOTALL)
-    return match.group(1).strip() if match else content
+    code = match.group(1).strip() if match else content
+
+    convo = {
+        "action": step['action'],
+        "sys-prompt": sys_prompt,
+        "usr-prompt": usr_prompt,
+        "llm-response": code,
+    }
+
+    return convo
 
 
 def exec_strategy(llm, temp, timeout, max_att, file_path):
@@ -87,17 +96,23 @@ def exec_strategy(llm, temp, timeout, max_att, file_path):
     strategy = json.load(file)
     file.close()
 
+    convo = {"exec-strategy": []}
+
     n_steps = len(strategy['strategy'])
 
     path = f"python-code"
     os.makedirs(path, exist_ok=True)
-    file_path = os.path.join(path, f"{llm}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.py")
+    filename = os.path.basename(file_path)
+    name, ext = os.path.splitext(filename)
+    strs = name.split('-')
+    file_path = os.path.join(path, f"{llm}-{strs[-2]}-{strs[-1]}.py")
     strategy['code-path'] = file_path
 
     for i in range(n_steps):
         log_step(i, strategy['strategy'][i]['action'])
 
-        code = exec_step(llm, temp, strategy, i)
+        c = exec_step(llm, temp, strategy, i)
+        code = c['llm-response']
 
         if code is not None:
             file = open(file_path, 'a')
@@ -110,9 +125,11 @@ def exec_strategy(llm, temp, timeout, max_att, file_path):
             log(f"💾 Saved step {i} code to `{file_path}`")
             log("~" * 75)
 
-            _ = exec_debug(
+            c_code = exec_debug(
                 "process", timeout, max_att, llm, temp, file_path
             )
+            c['code-convo'] = c_code
+            convo['exec-strategy'].append(c)
 
     # TODO: organize code of last step & summary
     path = "summary"
@@ -121,7 +138,7 @@ def exec_strategy(llm, temp, timeout, max_att, file_path):
     filename = f"{llm}-{prompt}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
     file_path = os.path.join(path, filename)
 
-    return
+    return convo
 
 
 # Helper for comparing LLM results

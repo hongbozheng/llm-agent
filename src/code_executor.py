@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Dict, List, Tuple
 
 import contextlib
 import io
@@ -114,7 +114,15 @@ And here is the error message:
             content = content[:-3].strip()
 
     match = re.search(r"```python(.*?)```", content, re.DOTALL)
-    return match.group(1).strip() if match else content
+    code = match.group(1).strip() if match else content
+
+    convo = {
+        "sys-prompt": sys_prompt,
+        "usr-prompt": usr_prompt,
+        "llm-response": code,
+    }
+
+    return convo
 
 
 def exec_debug(
@@ -124,7 +132,7 @@ def exec_debug(
         llm: str,
         temp: float,
         file_path: str,
-) -> bool:
+) -> List[Dict[str, str]]:
     """
         Try executing the file, and if it fails, ask LLM to fix it.
         Repeat until success or maximum attempts are reached.
@@ -133,6 +141,7 @@ def exec_debug(
             True if success, False if failed after retries.
         """
     att = 0
+    convo = []
     executor = CodeExecutor(mode, timeout)
 
     while att < max_att:
@@ -142,16 +151,17 @@ def exec_debug(
         if success:
             log(f"✅ Code executed successfully")
             log_output(f"🖨️ Output\n{output}")
-            return True
+            return convo
         else:
             log(f"❌ Code execution failed")
             log_output(f"🛠️ Error\n{output}")
 
             log(f"🛠 Attempting to fix code")
-            code = fix_code(llm, temp, file_path, output)
+            c = fix_code(llm, temp, file_path, output)
+            convo.append(c)
 
             f = open(file_path, 'w')
-            f.write(code)
+            f.write(c['llm-response'])
             f.close()
 
             log(f"🔁 Updated code. Retrying")
@@ -160,4 +170,4 @@ def exec_debug(
 
     log("🛑 Maximum attempts reached")
 
-    return False
+    return convo
