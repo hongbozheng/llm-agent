@@ -43,19 +43,21 @@ performs backtests on historical data, and outputs a full evaluation summary.
 
 ## 📂 Project Structure
 ```
+python-code                 # Directory storing LLM python script(s)
 src/
-├── logger.py               # format logging
-├── main.py                 # CLI entrypoint: generate → execute → compare
-├── step_generator.py       # Uses LLM to generate strategy plans
-├── step_executor.py        # Executes and evaluates each step
-├── autofix.py              # Threaded error handler + code fixer
-├── utils.py                # utility functions
 ├── config_data/
 │   └── rule.py             # Contains common error rules for LLM prompting
+├── code_executor.py        # Executes a given python script
+├── llm_client.py           # Handles LLM call
+├── logger.py               # format logging
+├── main.py                 # Main script: generate → execute → compare
+├── step_executor.py        # Executes and evaluates each step
+├── step_generator.py       # Uses LLM to generate strategy plans
+├── utils.py                # Utility functions
 strategy/                   # Saved strategy
-summaries/                  # Final results for each strategy
-
+summary/                    # Final results for each strategy
 ```
+
 ## 🚀 How to Run
 
 ### Create virtual environment
@@ -70,23 +72,47 @@ python3 -m venv hft
 pip install -r requirements.txt 
 ```
 
-### Generate + Execute Strategy Plan
+### Run LLM Agent
 
-``` python
-python3 src/main.py -m <llm> -p <prompt> -f <file_path> 
+Generate + Execute Strategy Plan
+
+```
+python3 src/main.py -m <llm> -p <prompt> 
 ```
 
 - `<llm>` - LLM to use (e.g. GPT-4o, Gemini, Deepseek, etc)
 - `<prompt>` - prompt to generate a strategy plan for
+
+Execute Strategy Plan
+
+```
+python3 src/main.py -m <llm> -f <file_path> 
+```
+
+- `<llm>` - LLM to use (e.g. GPT-4o, Gemini, Deepseek, etc)
 - `<file_path>` - generated strategy plan file path
 
-Example command line inputs.
+Other optional command line inputs
+
 ```
-python3 main.py -m gpt-4o -p What's a good strategy for NVDA in the next 30 days?
+python3 src/main.py -r <temperature> -t <timeout> -a <attempt>
+```
+
+- `<temperature>` - LLM response randomness (default to `0.50`)
+- `<timeout>` - python script execution timeout (default to `60`s)
+- `<attempt>` - maximum attempts to fix the error(s) in python script (default to `5`)
+
+Example command line inputs
+```
+python3 src/main.py -m gpt-4o -p What's a good strategy for NVDA in the next 30 days?
 ```
 
 ```
-python3 main.py -m gpt-4o -f strategy/strategy_gpt-4o_What's_a_good_strategy_for_NVDA_in_the_next_30_days_20250425_172847.json
+python3 src/main.py -m gpt-4o -f strategy/strategy_gpt-4o_What's_a_good_strategy_for_NVDA_in_the_next_30_days_20250425_172847.json
+```
+
+```
+python3 src/main.py -m gpt-4o -r 0.5 -t 30 -a 5 -p What's a good strategy for NVDA in the next 30 days?
 ```
 
 ## 👥 Team Members
@@ -95,7 +121,7 @@ python3 main.py -m gpt-4o -f strategy/strategy_gpt-4o_What's_a_good_strategy_for
 
 Email: hanxif2@illinois.edu
 
-LinkedIn:
+LinkedIn: https://www.linkedin.com/in/hanxi-fang-aa2252280/
 
 **Hanqi Mao**
 
@@ -116,7 +142,6 @@ Email: dadongp2@illinois.edu
 LinkedIn: https://www.linkedin.com/in/dadong-peng-50618619b/
 
 I'm Dadong Peng, PhD candidate in Mathematics, graph theory. With multiple years experience in gto poker, machine learning, data management, R & python programming, database and optimization. I had internship at Aviatrix in 2023 and received full-time sde offer from Huawei in 2024. Now I turned my interest in trading cash equities and cryptocurrencies, especially in building LLM-based auto trading system. I'm looking for an intership or full time position of quantitative trader/researcher or investment analyst before my graduation in early 2026.
-
 
 **Hongbo Zheng**
 
