@@ -1,15 +1,12 @@
 import os
-from llm_agent.core.llm.base_client import LLMBaseClient
+from llm_agent.core.llm_backends.base_client import LLMBaseClient
 from openai import OpenAI
 
 
-class DeepSeekClient(LLMBaseClient):
+class ChatGPTClient(LLMBaseClient):
     def __init__(self):
-        self.api_key = os.getenv("DEEPSEEK_API_KEY")
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url="https://api.deepseek.com",
-        )
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.client = OpenAI()
 
     def call(
             self,

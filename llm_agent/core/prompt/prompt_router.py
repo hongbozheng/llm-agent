@@ -1,8 +1,8 @@
-from ...config import AgentConfig
-from ..logger import log
-from ..schema import Prompt
-from .domain_registry import DOMAIN_REGISTRY
-from .prompt_parser import PromptParser
+from llm_agent.config.config import AgentConfig
+from llm_agent.core.logger import log
+from llm_agent.core.prompt import DOMAIN_REGISTRY
+from llm_agent.core.prompt.prompt_parser import PromptParser
+from llm_agent.core.prompt.schema import Prompt
 
 
 class PromptRouter:

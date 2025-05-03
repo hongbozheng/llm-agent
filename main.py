@@ -1,7 +1,7 @@
 import argparse
-from llm_agent.config import AgentConfig
-from llm_agent.core.env import load_api_keys
-from llm_agent.core.prompt import PromptRouter
+from llm_agent.config.config import AgentConfig
+from llm_agent.config.env import load_api_keys
+from llm_agent.core.prompt.prompt_router import PromptRouter
 from llm_agent.core.logger import log
 
 

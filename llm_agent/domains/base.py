@@ -1,7 +1,7 @@
 from typing import Dict
 
-from ..core.schema import Prompt
 from abc import ABC, abstractmethod
+from llm_agent.core.prompt.schema import Prompt
 
 
 class Domain(ABC):

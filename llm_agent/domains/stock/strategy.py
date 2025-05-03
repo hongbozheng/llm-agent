@@ -1,4 +1,4 @@
-from ...core.schema import Prompt
+from llm_agent.core.prompt.schema import Prompt
 
 
 def generate_strategy(prompt: Prompt) -> dict:

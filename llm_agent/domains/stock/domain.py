@@ -1,10 +1,10 @@
 from typing import Dict
 
-from ...core.schema import Prompt
-from ..base import Domain
-from .backtest import backtest_strategy
-from .evaluator import evaluate_strategy
-from .strategy import generate_strategy
+from llm_agent.core.prompt.schema import Prompt
+from llm_agent.domains.base import Domain
+from llm_agent.domains.stock.backtest import backtest_strategy
+from llm_agent.domains.stock.evaluator import evaluate_strategy
+from llm_agent.domains.stock.strategy import generate_strategy
 
 
 class Stock(Domain):

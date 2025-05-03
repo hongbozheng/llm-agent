@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from .logger import log
+from llm_agent.core.logger import log
 
 
 def load_api_keys(selected_llm: str):

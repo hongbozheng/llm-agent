@@ -1,8 +1,8 @@
 import json
-from ...config import AgentConfig
-from ..llm.llm_client import LLMClient
-from ..logger import log
-from ..schema import Prompt
+from llm_agent.config.config import AgentConfig
+from llm_agent.core.llm_backends import LLMClient
+from llm_agent.core.logger import log
+from llm_agent.core.prompt.schema import Prompt
 
 
 class PromptParser:

@@ -1,6 +1,6 @@
-import os
 import google.generativeai as genai
-from llm_agent.core.llm.base_client import LLMBaseClient
+import os
+from llm_agent.core.llm_backends.base_client import LLMBaseClient
 
 
 class GeminiClient(LLMBaseClient):

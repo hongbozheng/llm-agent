@@ -1,5 +1,5 @@
-from ..logger import log
-from .registry import LLM_REGISTRY
+from llm_agent.core.logger import log
+from llm_agent.core.llm_backends.registry import LLM_REGISTRY
 
 
 class LLMClient:

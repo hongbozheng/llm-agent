@@ -1,7 +1,4 @@
-from typing import Dict
-
-
-def evaluate_strategy(backtest_results: Dict) -> Dict:
+def evaluate_strategy(backtest_results: dict) -> dict:
     sharpe = backtest_results.get("sharpe_ratio", 0)
     drawdown = backtest_results.get("max_drawdown", 0)
 

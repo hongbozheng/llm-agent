@@ -1,7 +1,4 @@
-from typing import Dict
-
-
-def backtest_strategy(strategy: Dict) -> Dict:
+def backtest_strategy(strategy: dict) -> dict:
     """Simulate this strategy on dummy historical data."""
     # Placeholder: replace with real OHLCV crypto data engine
     return {

@@ -2,8 +2,8 @@ from typing import Optional
 
 import argparse
 import yaml
-from ..core.logger import log
 from dataclasses import dataclass, fields
+from llm_agent.core.logger import log
 
 
 @dataclass
@@ -33,7 +33,7 @@ class AgentConfig:
 
     def print_summary(self):
         log("=" * 75)
-        log("[INFO] 🔧 Active Configuration")
+        log("[INFO] ⚙️ Active Configuration")
         log("-" * 75)
         for field in fields(self):
             log(f"[INFO] {field.name}: {getattr(self, field.name)}")
