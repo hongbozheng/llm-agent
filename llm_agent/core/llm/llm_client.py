@@ -15,11 +15,16 @@ class LLMClient:
             top_p: float = 0.8,
     ) -> str:
         if llm not in LLM_REGISTRY:
-            log(f"❌ [ERROR] Unsupported LLM `{llm}`")
-            log(f"[ERROR] Choose from {{{LLM_REGISTRY.keys()}}}")
+            log(f"❌ [ERROR] Unsupported LLM backend: `{llm}`")
+            log(f"🔧 [INFO]  Supported: {list(LLM_REGISTRY.keys())}")
+            raise
+
         try:
-            client = LLM_REGISTRY[llm]
+            client_class = LLM_REGISTRY[llm]
+            client = client_class()
+
             return client.call(
+                model=llm,
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
                 max_tokens=max_tokens,
@@ -27,10 +32,7 @@ class LLMClient:
                 top_p=top_p,
             )
 
-            log(f"❌ [ERROR] Unsupported LLM backend: {llm}")
-            raise
-
         except Exception as e:
-            log(f"❌ [ERROR] Failed `{llm}` call")
-            log(f"❌ [ERROR] Exception: {e}")
+            log(f"❌ [ERROR] LLM call to `{llm}` failed.")
+            log(f"❌ [ERROR] Exception {e}")
             raise

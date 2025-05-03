@@ -1,0 +1,6 @@
+llm: "gpt-4o"
+max_tokens: 1024
+temperature: 0.5
+top_p: 0.8
+timeout: 60
+attempts: 5

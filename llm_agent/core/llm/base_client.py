@@ -4,6 +4,7 @@ class LLMBaseClient(ABC):
     @abstractmethod
     def call(
             self,
+            model: str,
             system_prompt: str,
             user_prompt: str,
             max_tokens: int,

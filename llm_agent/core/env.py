@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from .logger import log
 
 
-def check_api_keys(selected_llm: str) -> None:
+def load_api_keys(selected_llm: str):
     """Checks if necessary API keys for the given LLM are available."""
 
     load_dotenv()  # Load .env values into os.environ
@@ -24,12 +24,12 @@ def check_api_keys(selected_llm: str) -> None:
         if os.environ.get(env_var) is None:
             flag = False
             if llm == selected_llm:
-                log(f"❌ [ERROR] Missing {env_var:<16} for {llm}")
+                log(f"[ERROR] ❌ Missing {env_var:<16} for {llm}")
                 log("=" * 75)
                 exit(1)
             else:
-                log(f"⚠️ [WARN]  Missing {env_var:<16} for {llm}")
+                log(f"[WARN] ⚠️ Missing {env_var:<16} for {llm}")
 
     if flag:
-        log("✅ All necessary API keys are present.")
+        log("[INFO] ✅ All necessary API keys are present.")
     log("=" * 75)

@@ -1,37 +1,106 @@
 import argparse
+from llm_agent.config import AgentConfig
+from llm_agent.core.env import load_api_keys
 from llm_agent.core.prompt import PromptRouter
 from llm_agent.core.logger import log
 
 
-def main():
+def parse_cli() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run the LLM money strategy agent")
-    parser.add_argument("--prompt", type=str,
-                        help="User prompt for strategy generation")
+        prog="llm-agent", description="Financial Strategist Config",
+    )
+    parser.add_argument(
+        "--llm",
+        "-m",
+        type=str,
+        choices=["gpt-4o", "deepseek", "gemini"],
+        default="gpt-4o",
+        required=False,
+        help="LLM backend (e.g., gpt-4o, gemini, deepseek)",
+    )
+    parser.add_argument(
+        "--max_tokens",
+        "-l",
+        type=int,
+        default=1024,
+        required=False,
+        help="Max tokens",
+    )
+    parser.add_argument(
+        "--temperature",
+        "-r",
+        type=float,
+        default=0.5,
+        required=False,
+        help="Temperature parameter (default: 0.5)",
+    )
+    parser.add_argument(
+        "--top_p",
+        "-p",
+        type=float,
+        default=0.8,
+        required=False,
+        help="Top-p nucleus sampling"
+    )
+    parser.add_argument(
+        "--timeout",
+        "-t",
+        type=float,
+        default=60,
+        required=False,
+        help="Timeout"
+    )
+    parser.add_argument(
+        "--attempts",
+        "-a",
+        type=int,
+        default=5,
+        required=False,
+        help="Max attempts"
+    )
+    parser.add_argument(
+        "--prompt",
+        "-q",
+        type=str,
+        default=None,
+        required=False,
+        help="Financial prompt"
+    )
 
-    args = parser.parse_args()
-    prompt = args.prompt or input(">>> ")
+    return parser.parse_args()
 
-    print("🧠 Welcome to Money-Maker LLM Agent!")
-    print("💬 Type your question about making money (e.g., crypto, real estate, stocks):")
+
+def main():
+    args = parse_cli()
+    cfg = AgentConfig.load(cfg_path="llm_agent/config/cfg.yaml", args=args)
+    load_api_keys(selected_llm=cfg.llm)
+    cfg.print_summary()
+
+    router = PromptRouter(cfg=cfg)
+
+    log("[INFO] 🧠 Welcome to Financial Strategist!")
+    user_prompt = args.prompt
+
+    if not user_prompt:
+        log("[INFO] 💬 Ask your financial question (e.g., crypto, real estate, stocks):")
+        user_prompt = input("                      >>>>>> 👉 ").strip()
+
+    if not user_prompt:
+        log("[ERROR] ❌ Empty prompt. Please enter a question.")
+
+        return
 
     try:
-        user_prompt = input(">>> ").strip()
-        if not user_prompt:
-            print("⚠️ Empty prompt. Please enter a question.")
-            return
+        result = router.route(user_prompt=user_prompt)
 
-        router = PromptRouter()
-        result = router.route(user_prompt)
-
-        print("\n✅ Strategy Recommendation:")
+        print("[INFO] ✅ Strategy Recommendation:")
         print("-" * 60)
         for key, value in result.items():
             print(f"🔹 {key.capitalize()}:\n{value}\n")
 
     except Exception as e:
         log(f"❌ Failed to process prompt: {e}")
-        print("Something went wrong. Please try again.")
+
 
 if __name__ == "__main__":
     main()

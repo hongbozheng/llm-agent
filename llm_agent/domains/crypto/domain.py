@@ -1,5 +1,3 @@
-from typing import Dict
-
 from ...core.schema import Prompt
 from ..base import Domain
 from .backtest import backtest_strategy
@@ -8,10 +6,12 @@ from .strategy import generate_strategy
 
 
 class Crypto(Domain):
-    def handle_prompt(self, prompt: Prompt) -> Dict:
+    def handle_prompt(self, prompt: Prompt) -> dict:
         strategy = generate_strategy(prompt)
         backtest_results = backtest_strategy(strategy)
         evaluation = evaluate_strategy(backtest_results)
+
+        print("In Crypto")
 
         return {
             "domain": "crypto",
