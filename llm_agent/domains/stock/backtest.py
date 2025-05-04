@@ -1,5 +1,7 @@
 import json
+import os
 from llm_agent.config import AgentConfig
+from llm_agent.core.code_executor.executor import CodeExecutor
 from llm_agent.core.llm_backends import LLMClient
 from llm_agent.core.utils.parser import extract_block
 
@@ -56,8 +58,19 @@ Your script must:
         top_p=cfg.top_p,
     )
 
-    response = extract_block(response, language="python")
+    code = extract_block(text=response, language="python")
+
+    os.makedirs("output", exist_ok=True)
+    file_path = "output/backtest.py"
+    with open(file_path, mode='w') as f:
+        f.write(code)
+
+    executor = CodeExecutor(cfg=cfg)
+    executor.execute(file_path=file_path)
 
     print(response)
 
     return response
+
+
+

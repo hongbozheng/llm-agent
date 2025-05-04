@@ -41,7 +41,7 @@ def generate_strategy(cfg: AgentConfig, prompt: Prompt) -> dict:
         top_p=cfg.top_p,
     )
 
-    response = extract_block(response, language="json")
+    response = extract_block(text=response, language="json")
 
     response = json.loads(response)
 

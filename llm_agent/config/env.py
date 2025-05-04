@@ -17,7 +17,7 @@ def load_api_keys(selected_llm: str):
     flag = True
 
     log("=" * 75)
-    log("🔍 Checking API keys for LLMs")
+    log("[INFO] 🔍 Checking API keys for LLMs")
     log("-" * 75)
 
     for llm, env_var in llm_api_keys.items():

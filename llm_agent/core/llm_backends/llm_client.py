@@ -33,6 +33,6 @@ class LLMClient:
             )
 
         except Exception as e:
-            log(f"❌ [ERROR] LLM call to `{llm}` failed.")
-            log(f"❌ [ERROR] Exception {e}")
+            log(f"[ERROR] ❌ LLM call to `{llm}` failed.")
+            log(f"[ERROR] ❌ Exception {e}")
             raise

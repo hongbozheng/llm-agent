@@ -13,6 +13,7 @@ class Stock(Domain):
     def handle_prompt(self, prompt: Prompt) -> dict:
         strategy = generate_strategy(cfg=self.cfg, prompt=prompt)
         backtest_results = backtest_strategy(cfg=self.cfg, strategy=strategy)
+
         evaluation = evaluate_strategy(backtest_results)
 
         return {
