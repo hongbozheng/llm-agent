@@ -99,7 +99,7 @@ def main():
             print(f"🔹 {key.capitalize()}:\n{value}\n")
 
     except Exception as e:
-        log(f"❌ Failed to process prompt: {e}")
+        log(f"[ERROR] ❌ Failed to process prompt: {e}")
 
 
 if __name__ == "__main__":
