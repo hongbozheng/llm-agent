@@ -17,7 +17,7 @@ def load_api_keys(selected_llm: str):
     flag = True
 
     log("=" * 75)
-    log("[INFO] 🔍 Checking API keys for LLMs")
+    log("[INFO]  🔍 Checking API keys for LLMs")
     log("-" * 75)
 
     for llm, env_var in llm_api_keys.items():
@@ -28,8 +28,8 @@ def load_api_keys(selected_llm: str):
                 log("=" * 75)
                 exit(1)
             else:
-                log(f"[WARN] ⚠️ Missing {env_var:<16} for {llm}")
+                log(f"[WARN]  ⚠️ Missing {env_var:<16} for {llm}")
 
     if flag:
-        log("[INFO] ✅ All necessary API keys are present.")
+        log("[INFO]  ✅ All necessary API keys are present")
     log("=" * 75)

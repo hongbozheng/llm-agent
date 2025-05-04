@@ -12,11 +12,11 @@ class CodeExecutor:
         attempt = 0
 
         while attempt < self.cfg.attempts:
-            log(f"[INFO] 🚀 Attempt {attempt + 1} Executing `{file_path}`")
+            log(f"[INFO]  🚀 Attempt {attempt + 1} Executing `{file_path}`")
             success, output = exec_code(file_path=file_path, timeout=self.cfg.timeout)
 
             if success:
-                log(f"[INFO] ✅ `{file_path}` executed successfully")
+                log(f"[INFO]  ✅ `{file_path}` executed successfully")
             else:
                 log(f"[ERROR] ❌ `{file_path}` execution failed")
 

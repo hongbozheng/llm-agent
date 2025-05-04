@@ -33,8 +33,8 @@ class AgentConfig:
 
     def print_summary(self):
         log("=" * 75)
-        log("[INFO] ⚙️ Active Configuration")
+        log("[INFO]  ⚙️ Active Configuration")
         log("-" * 75)
         for field in fields(self):
-            log(f"[INFO] {field.name}: {getattr(self, field.name)}")
+            log(f"[INFO]  {field.name}: {getattr(self, field.name)}")
         log("=" * 75)

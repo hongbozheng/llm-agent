@@ -41,6 +41,6 @@ class PromptParser:
                 prompt=user_prompt,
             )
         except Exception as e:
-            log(f"❌ [ERROR]: Failed to parse LLM response into structured data.")
-            log(f"❌ [ERROR]: Exception `{e}`.")
+            log(f"[ERROR] ❌ Failed to parse LLM response into structured data")
+            log(f"[ERROR] ❌ Exception `{e}`")
             raise

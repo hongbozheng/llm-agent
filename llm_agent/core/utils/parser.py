@@ -27,5 +27,5 @@ def extract_block(text: str, language: str) -> str:
     if match:
         return match.group(1).strip()
 
-    log(f"[ERROR] ❌ No `{language}` block found.")
+    log(f"[ERROR] ❌ No `{language}` block found")
     raise

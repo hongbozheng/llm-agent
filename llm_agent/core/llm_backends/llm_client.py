@@ -15,8 +15,8 @@ class LLMClient:
             top_p: float = 0.8,
     ) -> str:
         if llm not in LLM_REGISTRY:
-            log(f"❌ [ERROR] Unsupported LLM backend: `{llm}`")
-            log(f"🔧 [INFO]  Supported: {list(LLM_REGISTRY.keys())}")
+            log(f"[ERROR] ❌ Unsupported LLM backend: `{llm}`")
+            log(f"[INFO]  🔧 Supported: {list(LLM_REGISTRY.keys())}")
             raise
 
         try:
@@ -33,6 +33,6 @@ class LLMClient:
             )
 
         except Exception as e:
-            log(f"[ERROR] ❌ LLM call to `{llm}` failed.")
+            log(f"[ERROR] ❌ LLM call to `{llm}` failed")
             log(f"[ERROR] ❌ Exception {e}")
             raise

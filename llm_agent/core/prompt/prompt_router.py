@@ -28,6 +28,6 @@ class PromptRouter:
             return handler.handle_prompt(prompt=prompt)
 
         except Exception as e:
-            log(f"[ERROR] ❌ Routing failed for prompt.")
+            log(f"[ERROR] ❌ Routing failed for prompt")
             log(f"[ERROR] ❌ Exception: {e}")
             raise
