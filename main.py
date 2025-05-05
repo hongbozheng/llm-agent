@@ -66,6 +66,14 @@ def parse_cli() -> argparse.Namespace:
         required=False,
         help="Financial prompt"
     )
+    parser.add_argument(
+        "--log",
+        "-o",
+        type=bool,
+        default=True,
+        required=False,
+        help="Log flag"
+    )
 
     return parser.parse_args()
 

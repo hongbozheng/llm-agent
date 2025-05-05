@@ -3,7 +3,7 @@ from typing import Optional
 import argparse
 import yaml
 from dataclasses import dataclass, fields
-from llm_agent.core.logger import log
+from llm_agent.logger.logger import log
 
 
 @dataclass
@@ -14,6 +14,7 @@ class AgentConfig:
     top_p: float = 0.8
     timeout: int = 60
     attempts: int = 5
+    log: bool = True
 
     @classmethod
     def load(

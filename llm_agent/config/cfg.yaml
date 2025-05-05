@@ -4,3 +4,4 @@ temperature: 0.5
 top_p: 0.8
 timeout: 60
 attempts: 5
+log: true
