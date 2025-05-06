@@ -1,7 +1,6 @@
 import argparse
 from llm_agent.config.config import AgentConfig
 from llm_agent.config.env import load_api_keys
-from llm_agent.config.utils import print_cfg
 from llm_agent.core.prompt.prompt_router import PromptRouter
 from llm_agent.logger.logger import log_error, log_info
 
@@ -83,7 +82,7 @@ def main():
     args = parse_cli()
     cfg = AgentConfig.load(cfg_path="llm_agent/config/cfg.yaml", args=args)
     load_api_keys(selected_llm=cfg.llm)
-    print_cfg(cfg=cfg)
+    cfg.print_summary()
 
     router = PromptRouter(cfg=cfg)
 
@@ -92,7 +91,7 @@ def main():
 
     if not user_prompt:
         log_info(" 💬 Ask your financial question (e.g., crypto, real estate, stocks):")
-        user_prompt = input("                      >>>>>> 👉 ").strip()
+        user_prompt = input("                      >>>>>>  👉 ").strip()
 
     if not user_prompt:
         log_error("❌ Empty prompt. Please enter a question.")

@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 
 import os
 from datetime import datetime
-from llm_agent.config import config
+from llm_agent.config import config as cfg
 
 
 def timestamp() -> str:
@@ -11,14 +11,14 @@ def timestamp() -> str:
 
 
 def _log(level: LogLevel, *args, **kwargs):
-    if config.LOG_LEVEL >= level:
+    if cfg.LOG_LEVEL >= level:
         ts = timestamp()
         print(f"[{ts}] [{level.name}] ", end="")
         print(*args, **kwargs)
 
 
 def _log_raw(level: LogLevel, *args, **kwargs):
-    if config.LOG_LEVEL >= level:
+    if cfg.LOG_LEVEL >= level:
         ts = timestamp()
         print(f"[{ts}] ", end="")
         print(*args, **kwargs)

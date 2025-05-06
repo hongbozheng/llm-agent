@@ -4,6 +4,7 @@ import argparse
 import yaml
 from dataclasses import dataclass, fields
 from llm_agent.logger.level import LogLevel
+from llm_agent.logger.logger import log_info
 
 
 LOG_LEVEL: LogLevel = LogLevel.INFO
@@ -39,3 +40,11 @@ class AgentConfig:
         LOG_LEVEL = LogLevel[cfg["log_level"].upper()]
 
         return cls(**cfg)
+
+    def print_summary(self):
+        log_info("=" * 75)
+        log_info(" ⚙️ Active Configuration")
+        log_info("-" * 75)
+        for field in fields(self):
+            log_info(f" 🔹 {field.name}: {getattr(self, field.name)}")
+        log_info("=" * 75)
