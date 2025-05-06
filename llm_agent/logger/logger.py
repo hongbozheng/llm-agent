@@ -10,10 +10,10 @@ def timestamp() -> str:
     return datetime.now().strftime(format="%Y-%m-%d %H:%M:%S")
 
 
-def _log(level: LogLevel, label: str, *args, **kwargs):
+def _log(level: LogLevel, *args, **kwargs):
     if config.LOG_LEVEL >= level:
         ts = timestamp()
-        print(f"[{ts}] [{label}] ", end="")
+        print(f"[{ts}] [{level.name}] ", end="")
         print(*args, **kwargs)
 
 
@@ -24,12 +24,12 @@ def _log_raw(level: LogLevel, *args, **kwargs):
         print(*args, **kwargs)
 
 
-def log_trace(*args, **kwargs): _log(LogLevel.TRACE, "TRACE", *args, **kwargs)
-def log_debug(*args, **kwargs): _log(LogLevel.DEBUG, "DEBUG", *args, **kwargs)
-def log_info(*args, **kwargs): _log(LogLevel.INFO, "INFO", *args, **kwargs)
-def log_warn(*args, **kwargs): _log(LogLevel.WARN, "WARN", *args, **kwargs)
-def log_error(*args, **kwargs): _log(LogLevel.ERROR, "ERROR", *args, **kwargs)
-def log_fatal(*args, **kwargs): _log(LogLevel.FATAL, "FATAL", *args, **kwargs)
+def log_trace(*args, **kwargs): _log(LogLevel.TRACE, *args, **kwargs)
+def log_debug(*args, **kwargs): _log(LogLevel.DEBUG, *args, **kwargs)
+def log_info(*args, **kwargs): _log(LogLevel.INFO, *args, **kwargs)
+def log_warn(*args, **kwargs): _log(LogLevel.WARN, *args, **kwargs)
+def log_error(*args, **kwargs): _log(LogLevel.ERROR, *args, **kwargs)
+def log_fatal(*args, **kwargs): _log(LogLevel.FATAL, *args, **kwargs)
 
 
 def log_trace_raw(*args, **kwargs): _log_raw(LogLevel.TRACE, *args, **kwargs)
