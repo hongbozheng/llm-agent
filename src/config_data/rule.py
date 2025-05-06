@@ -8,6 +8,12 @@ COMMON_CODE_ERRORS = [
         "cause": "yfinance may return data without an 'Adj Close' column, or the column might be labeled 'Close'.",
         "fix": "After downloading data, check and rename columns: data.rename(columns={'Close': 'Adj Close'}, inplace=True)"
     },
+    # prompt rule for data dimension problem
+    {
+        "error": "input array has wrong dimensions",
+        "cause": "talib.SMA() expects a 1D array of floats, yfinance may return data without an 'Adj Close' column, or the column might be labeled 'Close'.",
+        "fix": "After downloading data, check and flattening the multi-index columns. For example: data['SMA_10'] = talib.SMA(data['Adj Close'].values.flatten(), timeperiod=10)"
+    },
     # {
     #     "error": "name 'data' is not defined",
     #     "cause": "Data was not loaded in previous steps or not shared across steps.",
