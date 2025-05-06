@@ -1,7 +1,7 @@
 from llm_agent.config.config import AgentConfig
 from llm_agent.core.code_executor.repair import fix_code
 from llm_agent.core.code_executor.runner import exec_code
-from llm_agent.core.logger import log
+from llm_agent.logger.logger import log_error, log_info
 
 
 class CodeExecutor:
@@ -12,19 +12,19 @@ class CodeExecutor:
         attempt = 0
 
         while attempt < self.cfg.attempts:
-            log(f"[INFO]  🚀 Attempt {attempt + 1} Executing `{file_path}`")
+            log_info(f" 🚀 Attempt {attempt + 1} Executing `{file_path}`")
             success, output = exec_code(file_path=file_path, timeout=self.cfg.timeout)
 
             if success:
-                log(f"[INFO]  ✅ `{file_path}` executed successfully")
+                log_info(f" ✅ `{file_path}` executed successfully")
             else:
-                log(f"[ERROR] ❌ `{file_path}` execution failed")
+                log_error(f"❌ `{file_path}` execution failed")
 
-                log(f"[INFO]  🛠 Attempting to fix code")
+                log_info(f" 🛠 Attempting to fix code")
                 _ = fix_code(cfg=self.cfg, file_path=file_path, error=output)
 
-                log(f"[INFO]  🔁 Retrying updated code")
-                log("~" * 75)
+                log_info(f" 🔁 Retrying updated code")
+                log_info("~" * 75)
                 attempt += 1
 
-        log("[INFO]  🛑 Maximum attempts reached")
+        log_info(" 🛑 Maximum attempts reached")

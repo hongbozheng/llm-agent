@@ -1,8 +1,8 @@
 from llm_agent.config.config import AgentConfig
-from llm_agent.core.logger import log
 from llm_agent.core.prompt import DOMAIN_REGISTRY
 from llm_agent.core.prompt.prompt_parser import PromptParser
 from llm_agent.core.prompt.schema import Prompt
+from llm_agent.logger.logger import log_error, log_info
 
 
 class PromptRouter:
@@ -18,8 +18,8 @@ class PromptRouter:
             domain = prompt.domain
 
             if domain not in DOMAIN_REGISTRY:
-                log(f"[ERROR] ❌ Unsupported domain: `{domain}`")
-                log(f"[INFO]  🔧 Supported: {list(DOMAIN_REGISTRY.keys())}")
+                log_error(f"❌ Unsupported domain: `{domain}`")
+                log_info(f" 🔧 Supported: {list(DOMAIN_REGISTRY.keys())}")
                 raise
 
             handler_class = DOMAIN_REGISTRY[domain]
@@ -28,6 +28,6 @@ class PromptRouter:
             return handler.handle_prompt(prompt=prompt)
 
         except Exception as e:
-            log(f"[ERROR] ❌ Routing failed for prompt")
-            log(f"[ERROR] ❌ Exception: {e}")
+            log_error(f"❌ Routing failed for prompt")
+            log_error(f"❌ Exception: {e}")
             raise

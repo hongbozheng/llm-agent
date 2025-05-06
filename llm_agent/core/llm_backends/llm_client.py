@@ -1,5 +1,5 @@
-from llm_agent.core.logger import log
 from llm_agent.core.llm_backends.registry import LLM_REGISTRY
+from llm_agent.logger.logger import log_error, log_info
 
 
 class LLMClient:
@@ -15,8 +15,8 @@ class LLMClient:
             top_p: float = 0.8,
     ) -> str:
         if llm not in LLM_REGISTRY:
-            log(f"[ERROR] ❌ Unsupported LLM backend: `{llm}`")
-            log(f"[INFO]  🔧 Supported: {list(LLM_REGISTRY.keys())}")
+            log_error(f"❌ Unsupported LLM backend: `{llm}`")
+            log_info(f" 🔧 Supported: {list(LLM_REGISTRY.keys())}")
             raise
 
         try:
@@ -33,6 +33,6 @@ class LLMClient:
             )
 
         except Exception as e:
-            log(f"[ERROR] ❌ LLM call to `{llm}` failed")
-            log(f"[ERROR] ❌ Exception {e}")
+            log_error(f"❌ LLM call to `{llm}` failed")
+            log_error(f"❌ Exception {e}")
             raise

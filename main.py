@@ -1,8 +1,9 @@
 import argparse
 from llm_agent.config.config import AgentConfig
 from llm_agent.config.env import load_api_keys
+from llm_agent.config.utils import print_cfg
 from llm_agent.core.prompt.prompt_router import PromptRouter
-from llm_agent.core.logger import log
+from llm_agent.logger.logger import log_error, log_info
 
 
 def parse_cli() -> argparse.Namespace:
@@ -11,7 +12,6 @@ def parse_cli() -> argparse.Namespace:
     )
     parser.add_argument(
         "--llm",
-        "-m",
         type=str,
         choices=["gpt-4o", "deepseek", "gemini"],
         default="gpt-4o",
@@ -20,7 +20,6 @@ def parse_cli() -> argparse.Namespace:
     )
     parser.add_argument(
         "--max_tokens",
-        "-l",
         type=int,
         default=1024,
         required=False,
@@ -28,7 +27,6 @@ def parse_cli() -> argparse.Namespace:
     )
     parser.add_argument(
         "--temperature",
-        "-r",
         type=float,
         default=0.5,
         required=False,
@@ -36,7 +34,6 @@ def parse_cli() -> argparse.Namespace:
     )
     parser.add_argument(
         "--top_p",
-        "-p",
         type=float,
         default=0.8,
         required=False,
@@ -44,7 +41,6 @@ def parse_cli() -> argparse.Namespace:
     )
     parser.add_argument(
         "--timeout",
-        "-t",
         type=float,
         default=60,
         required=False,
@@ -52,7 +48,6 @@ def parse_cli() -> argparse.Namespace:
     )
     parser.add_argument(
         "--attempts",
-        "-a",
         type=int,
         default=5,
         required=False,
@@ -60,15 +55,21 @@ def parse_cli() -> argparse.Namespace:
     )
     parser.add_argument(
         "--prompt",
-        "-q",
         type=str,
         default=None,
         required=False,
         help="Financial prompt"
     )
     parser.add_argument(
+        "--log_level",
+        type=str,
+        choices=["all", "trace", "debug", "info", "warn", "error", "fatal", "off"],
+        default="info",
+        required=False,
+        help="Log level"
+    )
+    parser.add_argument(
         "--log",
-        "-o",
         type=bool,
         default=True,
         required=False,
@@ -82,19 +83,19 @@ def main():
     args = parse_cli()
     cfg = AgentConfig.load(cfg_path="llm_agent/config/cfg.yaml", args=args)
     load_api_keys(selected_llm=cfg.llm)
-    cfg.print_summary()
+    print_cfg(cfg=cfg)
 
     router = PromptRouter(cfg=cfg)
 
-    log("[INFO] 🧠 Welcome to Financial Strategist!")
+    log_info(" 🧠 Welcome to Financial Strategist!")
     user_prompt = args.prompt
 
     if not user_prompt:
-        log("[INFO] 💬 Ask your financial question (e.g., crypto, real estate, stocks):")
+        log_info(" 💬 Ask your financial question (e.g., crypto, real estate, stocks):")
         user_prompt = input("                      >>>>>> 👉 ").strip()
 
     if not user_prompt:
-        log("[ERROR] ❌ Empty prompt. Please enter a question.")
+        log_error("❌ Empty prompt. Please enter a question.")
 
         return
 
@@ -107,7 +108,7 @@ def main():
             print(f"🔹 {key.capitalize()}:\n{value}\n")
 
     except Exception as e:
-        log(f"[ERROR] ❌ Failed to process prompt: {e}")
+        log_info(f" ❌ Failed to process prompt: {e}")
 
 
 if __name__ == "__main__":

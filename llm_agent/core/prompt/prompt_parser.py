@@ -1,8 +1,8 @@
 import json
 from llm_agent.config.config import AgentConfig
 from llm_agent.core.llm_backends import LLMClient
-from llm_agent.core.logger import log
 from llm_agent.core.prompt.schema import Prompt
+from llm_agent.logger.logger import log_error
 
 
 class PromptParser:
@@ -41,6 +41,6 @@ class PromptParser:
                 prompt=user_prompt,
             )
         except Exception as e:
-            log(f"[ERROR] ❌ Failed to parse LLM response into structured data")
-            log(f"[ERROR] ❌ Exception `{e}`")
+            log_error(f"❌ Failed to parse LLM response into structured data")
+            log_error(f"❌ Exception `{e}`")
             raise
