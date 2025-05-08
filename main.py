@@ -2,6 +2,7 @@ import argparse
 from llm_agent.config.config import AgentConfig
 from llm_agent.config.env import load_api_keys
 from llm_agent.core.prompt.prompt_router import PromptRouter
+from llm_agent.io.writer import Writer
 from llm_agent.logger.logger import log_error, log_info
 
 
@@ -13,42 +14,42 @@ def parse_cli() -> argparse.Namespace:
         "--llm",
         type=str,
         choices=["gpt-4o", "deepseek", "gemini"],
-        default="gpt-4o",
+        default=None,  # "gpt-4o"
         required=False,
         help="LLM backend (e.g., gpt-4o, gemini, deepseek)",
     )
     parser.add_argument(
         "--max_tokens",
         type=int,
-        default=1024,
+        default=None,  # 1024
         required=False,
         help="Max tokens",
     )
     parser.add_argument(
         "--temperature",
         type=float,
-        default=0.5,
+        default=None,  # 0.50
         required=False,
         help="Temperature parameter (default: 0.5)",
     )
     parser.add_argument(
         "--top_p",
         type=float,
-        default=0.8,
+        default=None,  # 0.80
         required=False,
         help="Top-p nucleus sampling"
     )
     parser.add_argument(
         "--timeout",
         type=float,
-        default=60,
+        default=None,  # 60
         required=False,
         help="Timeout"
     )
     parser.add_argument(
         "--attempts",
         type=int,
-        default=5,
+        default=None,  # 5
         required=False,
         help="Max attempts"
     )
@@ -63,16 +64,23 @@ def parse_cli() -> argparse.Namespace:
         "--log_level",
         type=str,
         choices=["all", "trace", "debug", "info", "warn", "error", "fatal", "off"],
-        default="info",
+        default=None,  # "info"
         required=False,
         help="Log level"
     )
     parser.add_argument(
         "--log",
         type=bool,
-        default=True,
+        default=None,  # true
         required=False,
         help="Log flag"
+    )
+    parser.add_argument(
+        "--save",
+        type=bool,
+        default=None,  # true
+        required=False,
+        help="Save output"
     )
 
     return parser.parse_args()
@@ -85,6 +93,10 @@ def main():
     cfg.print_summary()
 
     router = PromptRouter(cfg=cfg)
+    writer = None
+
+    if cfg.save:
+        writer = Writer(base_dir="output")
 
     log_info(" 🧠 Welcome to Financial Strategist!")
     user_prompt = args.prompt
@@ -99,7 +111,7 @@ def main():
         return
 
     try:
-        result = router.route(user_prompt=user_prompt)
+        result = router.route(user_prompt=user_prompt, writer=writer)
 
         print("[INFO] ✅ Strategy Recommendation:")
         print("-" * 60)

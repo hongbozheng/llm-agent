@@ -1,12 +1,12 @@
-import json
-import os
 from llm_agent.config import AgentConfig
-from llm_agent.core.code_executor.executor import CodeExecutor
+
 from llm_agent.core.llm_backends import LLMClient
 from llm_agent.core.utils.parser import extract_block
+from llm_agent.domains.stock.knowledge.prompt_helpers import get_coding_advice
+from llm_agent.logger.logger import log_error
 
 
-def backtest_strategy(cfg: AgentConfig, strategy: dict) -> dict:
+def backtest_strategy(cfg: AgentConfig, strategy: dict) -> str:
     """Simulate this strategy on dummy historical data."""
     # Placeholder: replace with real OHLCV crypto data engine
 
@@ -19,8 +19,10 @@ def backtest_strategy(cfg: AgentConfig, strategy: dict) -> dict:
         "- Avoiding any external frameworks (like Backtrader or Zipline)\n"
         "- Printing backtest results in JSON format (using `json.dumps`)\n"
         "- Using clear variable names and simple performance metrics\n"
-        "- Following best engineering practices with complete scripts"
+        "- Following best engineering practices with complete scripts\n\n"
     )
+
+    system_prompt += get_coding_advice()
 
     user_prompt = f"""
 Using the strategy details below, write a complete backtest script in Python:
@@ -58,19 +60,11 @@ Your script must:
         top_p=cfg.top_p,
     )
 
-    code = extract_block(text=response, language="python")
+    try:
+        code = extract_block(text=response, language="python")
+    except Exception as e:
+        log_error(f"❌ Failed to parse LLM response into Python")
+        log_error(f"❌ Exception `{e}`")
+        raise
 
-    os.makedirs("output", exist_ok=True)
-    file_path = "output/backtest.py"
-    with open(file_path, mode='w') as f:
-        f.write(code)
-
-    executor = CodeExecutor(cfg=cfg)
-    executor.execute(file_path=file_path)
-
-    print(response)
-
-    return response
-
-
-
+    return code

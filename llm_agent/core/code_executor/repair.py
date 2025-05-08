@@ -1,9 +1,12 @@
 from llm_agent.config import AgentConfig
+from pathlib import Path
+
 from llm_agent.core.llm_backends.llm_client import LLMClient
 from llm_agent.core.utils import extract_block
+from llm_agent.logger.logger import log_error
 
 
-def fix_code(cfg: AgentConfig, file_path: str, error: str):
+def fix_code(cfg: AgentConfig, file_path: Path, error: str):
     with open(file=file_path, mode='r', encoding="utf-8") as f:
         code = f.read()
     print(error)
@@ -34,9 +37,12 @@ Error Message:
         top_p=cfg.top_p,
     )
 
-    code = extract_block(text=response, language="python")
+    try:
+        code = extract_block(text=response, language="python")
+    except Exception as e:
+        log_error(f"❌ Failed to parse LLM response into Python")
+        log_error(f"❌ Exception `{e}`")
+        raise
 
     with open(file=file_path, mode='w', encoding="utf-8") as f:
         f.write(code)
-
-    return code

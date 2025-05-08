@@ -1,7 +1,7 @@
-import json
 from llm_agent.config.config import AgentConfig
+
+import json
 from llm_agent.core.llm_backends import LLMClient
-from llm_agent.core.prompt.schema import Prompt
 from llm_agent.logger.logger import log_error
 
 
@@ -9,7 +9,7 @@ class PromptParser:
     def __init__(self, cfg: AgentConfig):
         self.cfg = cfg
 
-    def parse(self, user_prompt: str) -> Prompt:
+    def parse(self, user_prompt: str) -> dict:
         """Uses an LLM to extract domain, intent, and constraints from the user input."""
 
         system_prompt = (
@@ -32,15 +32,8 @@ class PromptParser:
         )
 
         try:
-            prompt = json.loads(response)
-            print(prompt)
-            return Prompt(
-                domain=prompt["domain"].lower(),
-                intent=prompt["intent"],
-                constraints=prompt.get("constraints", {}),
-                prompt=user_prompt,
-            )
+            return json.loads(response)
         except Exception as e:
-            log_error(f"❌ Failed to parse LLM response into structured data")
+            log_error(f"❌ Failed to parse LLM response into JSON")
             log_error(f"❌ Exception `{e}`")
             raise

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class LLMBaseClient(ABC):
     @abstractmethod
     def call(

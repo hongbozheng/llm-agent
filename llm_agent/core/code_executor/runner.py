@@ -1,7 +1,9 @@
+from pathlib import Path
+
 import subprocess
 
 
-def exec_code(file_path: str, timeout: int) -> bool:
+def exec_code(file_path: Path, timeout: int) -> bool:
     """Runs Python code in isolated subprocess and returns execution result."""
 
     try:

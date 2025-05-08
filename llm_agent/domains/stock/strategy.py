@@ -3,6 +3,7 @@ from llm_agent.config import AgentConfig
 from llm_agent.core.llm_backends import LLMClient
 from llm_agent.core.prompt.schema import Prompt
 from llm_agent.core.utils.parser import extract_block
+from llm_agent.logger.logger import log_error
 
 
 def generate_strategy(cfg: AgentConfig, prompt: Prompt) -> dict:
@@ -43,8 +44,13 @@ def generate_strategy(cfg: AgentConfig, prompt: Prompt) -> dict:
 
     response = extract_block(text=response, language="json")
 
-    response = json.loads(response)
+    try:
+        strategy = json.loads(response)
+    except Exception as e:
+        log_error(f"❌ Failed to parse LLM response into JSON")
+        log_error(f"❌ Exception `{e}`")
+        raise
 
-    print(json.dumps(response, indent=2))
+    print(json.dumps(strategy, indent=2))
 
-    return response
+    return strategy

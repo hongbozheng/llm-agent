@@ -20,6 +20,7 @@ class AgentConfig:
     attempts: int = 5
     log_level: str = "info"
     log: bool = True
+    save: bool = True
 
     @classmethod
     def load(

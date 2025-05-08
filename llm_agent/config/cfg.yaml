@@ -6,3 +6,4 @@ timeout: 60
 attempts: 5
 log_level: "info"
 log: true
+save: true

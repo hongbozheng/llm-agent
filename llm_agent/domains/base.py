@@ -1,7 +1,9 @@
-from abc import ABC, abstractmethod
-
 from llm_agent.config import AgentConfig
 from llm_agent.core.prompt.schema import Prompt
+from llm_agent.io.writer import Writer
+from typing import Optional
+
+from abc import ABC, abstractmethod
 
 
 class Domain(ABC):
@@ -9,6 +11,10 @@ class Domain(ABC):
         self.cfg = cfg
 
     @abstractmethod
-    def handle_prompt(self, prompt: Prompt) -> dict:
+    def process_prompt(
+            self,
+            prompt: Prompt,
+            writer: Optional[Writer] = None,
+    ) -> dict:
         """Given parsed intent, return a recommended strategy."""
         ...
