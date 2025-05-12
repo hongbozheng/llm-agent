@@ -117,12 +117,6 @@ python3 src/main.py -m gpt-4o -r 0.5 -t 30 -a 5 -p What's a good strategy for NV
 
 ## 👥 Team Members
 
-**Hanxi Fang**
-
-Email: hanxif2@illinois.edu
-
-LinkedIn: https://www.linkedin.com/in/hanxi-fang-aa2252280/
-
 **Hanqi Mao**
 
 <img src="assets/andy_image.png" alt="Andy Image" width="200"/><br/>
