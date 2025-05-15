@@ -2,7 +2,5 @@
 .env
 .idea/
 __pycache__/
-python-code/
-strategy/
-summary/
 venv/
+output/
