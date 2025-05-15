@@ -5,6 +5,9 @@ def get_coding_advice() -> str:
     """
     Return formatted string with LLM backtest coding mistakes and how to avoid them.
     """
+    if len(COMMON_MISTAKES) == 0:
+        return ""
+
     sections = [
         "You are writing Python code for backtesting a stock strategy.",
         "Here are common mistakes you MUST avoid:"
