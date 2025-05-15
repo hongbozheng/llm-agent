@@ -1,13 +1,11 @@
 from pathlib import Path
 
 import json
-from datetime import datetime
 
 
 class Writer:
-    def __init__(self, base_dir: str = "output"):
-        timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-        self.path = Path(base_dir) / timestamp
+    def __init__(self, path: Path):
+        self.path = path
         self.path.mkdir(parents=True, exist_ok=True)
 
     def save_json(self, obj: dict, name: str):

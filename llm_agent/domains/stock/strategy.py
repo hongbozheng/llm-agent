@@ -1,12 +1,21 @@
-import json
 from llm_agent.config import AgentConfig
-from llm_agent.core.llm_backends import LLMClient
 from llm_agent.core.prompt.schema import Prompt
+from llm_agent.io.conversation_logger import ConversationLogger
+from llm_agent.io.writer import Writer
+from typing import Optional
+
+import json
+from llm_agent.core.llm_backends import LLMClient
 from llm_agent.core.utils.parser import extract_block
-from llm_agent.logger.logger import log_error
+from llm_agent.logger.logger import log_error, log_info
 
 
-def generate_strategy(cfg: AgentConfig, prompt: Prompt) -> dict:
+def generate_strategy(
+        cfg: AgentConfig,
+        prompt: Prompt,
+        logger: Optional[ConversationLogger] = None,
+        writer: Optional[Writer] = None,
+) -> dict:
     """Uses LLM to generate a domain-specific stock trading strategy plan."""
 
     system_prompt = (
@@ -52,5 +61,14 @@ def generate_strategy(cfg: AgentConfig, prompt: Prompt) -> dict:
         raise
 
     print(json.dumps(strategy, indent=2))
+
+    if logger is not None:
+        logger.log_system(prompt=system_prompt)
+        logger.log_user(prompt=user_prompt)
+        logger.log_llm(response=json.dumps(strategy, indent=2))
+
+    if writer is not None:
+        writer.save_json(obj=strategy, name="strategy")
+        log_info(f" 📝 Save strategy to `{writer.get_path()}/strategy.json`")
 
     return strategy

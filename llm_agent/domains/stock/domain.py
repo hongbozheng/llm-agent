@@ -7,6 +7,7 @@ from llm_agent.domains.base import Domain
 from llm_agent.domains.stock.backtest import backtest_strategy
 from llm_agent.domains.stock.evaluator import evaluate_strategy
 from llm_agent.domains.stock.strategy import generate_strategy
+from llm_agent.io.conversation_logger import ConversationLogger
 from llm_agent.io.writer import Writer
 from llm_agent.logger.logger import log_info
 
@@ -18,26 +19,21 @@ class Stock(Domain):
     def process_prompt(
             self,
             prompt: Prompt,
+            logger: Optional[ConversationLogger] = None,
             writer: Optional[Writer] = None,
     ) -> dict:
-        path = writer.get_path()
+        strategy = generate_strategy(
+            cfg=self.cfg, prompt=prompt, logger=logger, writer=writer
+        )
 
-        strategy = generate_strategy(cfg=self.cfg, prompt=prompt)
-
-        if writer is not None:
-            writer.save_json(obj=strategy, name="strategy")
-            log_info(f" 📝Save strategy to `{path}/strategy.json`")
-
-        code = backtest_strategy(cfg=self.cfg, strategy=strategy)
-
-        if writer is not None:
-            writer.save_code(code=code, name="backtest")
-            log_info(f" 💾Save strategy to `{path}/backtest.py`")
-
-        file_path = path / "backtest.py"
+        code = backtest_strategy(
+            cfg=self.cfg, strategy=strategy, logger=logger, writer=writer
+        )
 
         executor = CodeExecutor(cfg=self.cfg)
-        executor.execute(file_path=file_path)
+        executor.execute(
+            file_path=writer.get_path() / "backtest.py", logger=logger
+        )
 
         # evaluation = evaluate_strategy(
         #     strategy=strategy,

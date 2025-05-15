@@ -1,12 +1,20 @@
 from llm_agent.config import AgentConfig
+from llm_agent.io.conversation_logger import ConversationLogger
+from llm_agent.io.writer import Writer
+from typing import Optional
 
 from llm_agent.core.llm_backends import LLMClient
 from llm_agent.core.utils.parser import extract_block
 from llm_agent.domains.stock.knowledge.prompt_helpers import get_coding_advice
-from llm_agent.logger.logger import log_error
+from llm_agent.logger.logger import log_error, log_info
 
 
-def backtest_strategy(cfg: AgentConfig, strategy: dict) -> str:
+def backtest_strategy(
+        cfg: AgentConfig,
+        strategy: dict,
+        logger: Optional[ConversationLogger] = None,
+        writer: Optional[Writer] = None,
+) -> str:
     """Simulate this strategy on dummy historical data."""
     # Placeholder: replace with real OHLCV crypto data engine
 
@@ -66,5 +74,14 @@ Your script must:
         log_error(f"❌ Failed to parse LLM response into Python")
         log_error(f"❌ Exception `{e}`")
         raise
+
+    if logger is not None:
+        logger.log_system(prompt=system_prompt)
+        logger.log_user(prompt=user_prompt)
+        logger.log_llm(response=code)
+
+    if writer is not None:
+        writer.save_code(code=code, name="backtest")
+        log_info(f" 💾 Save strategy to `{writer.get_path()}/backtest.py`")
 
     return code

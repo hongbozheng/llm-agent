@@ -1,9 +1,12 @@
 import argparse
+from datetime import datetime
 from llm_agent.config.config import AgentConfig
 from llm_agent.config.env import load_api_keys
 from llm_agent.core.prompt.prompt_router import PromptRouter
+from llm_agent.io.conversation_logger import ConversationLogger
 from llm_agent.io.writer import Writer
 from llm_agent.logger.logger import log_error, log_info
+from pathlib import Path
 
 
 def parse_cli() -> argparse.Namespace:
@@ -37,28 +40,28 @@ def parse_cli() -> argparse.Namespace:
         type=float,
         default=None,  # 0.80
         required=False,
-        help="Top-p nucleus sampling"
+        help="Top-p nucleus sampling",
     )
     parser.add_argument(
         "--timeout",
         type=float,
         default=None,  # 60
         required=False,
-        help="Timeout"
+        help="Timeout",
     )
     parser.add_argument(
         "--attempts",
         type=int,
         default=None,  # 5
         required=False,
-        help="Max attempts"
+        help="Max attempts",
     )
     parser.add_argument(
         "--prompt",
         type=str,
         default=None,
         required=False,
-        help="Financial prompt"
+        help="Financial prompt",
     )
     parser.add_argument(
         "--log_level",
@@ -66,21 +69,21 @@ def parse_cli() -> argparse.Namespace:
         choices=["all", "trace", "debug", "info", "warn", "error", "fatal", "off"],
         default=None,  # "info"
         required=False,
-        help="Log level"
+        help="Log level",
     )
     parser.add_argument(
         "--log",
         type=bool,
         default=None,  # true
         required=False,
-        help="Log flag"
+        help="Log flag",
     )
     parser.add_argument(
         "--save",
         type=bool,
         default=None,  # true
         required=False,
-        help="Save output"
+        help="Save output",
     )
 
     return parser.parse_args()
@@ -93,10 +96,14 @@ def main():
     cfg.print_summary()
 
     router = PromptRouter(cfg=cfg)
+    logger = None
     writer = None
 
+    timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+    if cfg.log:
+        logger = ConversationLogger(path=Path("output") / timestamp)
     if cfg.save:
-        writer = Writer(base_dir="output")
+        writer = Writer(path=Path("output") / timestamp)
 
     log_info(" 🧠 Welcome to Financial Strategist!")
     user_prompt = args.prompt
@@ -111,7 +118,9 @@ def main():
         return
 
     try:
-        result = router.route(user_prompt=user_prompt, writer=writer)
+        result = router.route(
+            user_prompt=user_prompt, logger=logger, writer=writer,
+        )
 
         print("[INFO] ✅ Strategy Recommendation:")
         print("-" * 60)

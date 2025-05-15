@@ -1,4 +1,5 @@
 from llm_agent.config.config import AgentConfig
+from llm_agent.io.conversation_logger import ConversationLogger
 from llm_agent.io.writer import Writer
 from typing import Optional
 
@@ -15,12 +16,16 @@ class PromptRouter:
         self.cfg = cfg
         self.parser = PromptParser(cfg=cfg)
 
-    def route(self, user_prompt: str, writer: Optional[Writer] = None) -> dict:
+    def route(
+            self,
+            user_prompt: str,
+            logger: Optional[ConversationLogger] = None,
+            writer: Optional[Writer] = None,
+    ) -> dict:
         try:
-            prompt = self.parser.parse(user_prompt=user_prompt)
-
-            if writer is not None:
-                writer.save_json(obj=prompt, name="prompt")
+            prompt = self.parser.parse(
+                user_prompt=user_prompt, logger=logger, writer=writer,
+            )
 
             prompt = Prompt(
                 domain=prompt["domain"].lower(),
@@ -38,7 +43,9 @@ class PromptRouter:
             handler_class = DOMAIN_REGISTRY[domain]
             handler = handler_class(cfg=self.cfg)
 
-            return handler.process_prompt(prompt=prompt, writer=writer)
+            return handler.process_prompt(
+                prompt=prompt, logger=logger, writer=writer
+            )
 
         except Exception as e:
             log_error(f"❌ Routing failed for prompt")
