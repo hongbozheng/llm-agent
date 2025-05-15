@@ -8,26 +8,26 @@ COMMON_CODE_ERRORS = [
         "cause": "yfinance may return data without an 'Adj Close' column, or the column might be labeled 'Close'.",
         "fix": "After downloading data, check and rename columns: data.rename(columns={'Close': 'Adj Close'}, inplace=True)"
     },
-    {
-        "error": "name 'data' is not defined",
-        "cause": "Data was not loaded in previous steps or not shared across steps.",
-        "fix": "Always start by loading data (e.g., using yfinance) and ensure it's assigned to a variable called 'data'."
-    },
-    {
-        "error": "name 'strategy_type' is not defined",
-        "cause": "strategy_type is computed in a previous step but not saved globally.",
-        "fix": "Store it in a shared dictionary: strategy_info = {'strategy_type': strategy_type}."
-    },
-    {
-        "error": "name 'np' is not defined",
-        "cause": "You are using numpy without importing it.",
-        "fix": "Include import numpy as np at the top of the code."
-    },
-    {
-        "error": "name 'plt' is not defined",
-        "cause": "You are plotting with matplotlib but didn't import it.",
-        "fix": "Include import matplotlib.pyplot as plt before using it."
-    },
+    # {
+    #     "error": "name 'data' is not defined",
+    #     "cause": "Data was not loaded in previous steps or not shared across steps.",
+    #     "fix": "Always start by loading data (e.g., using yfinance) and ensure it's assigned to a variable called 'data'."
+    # },
+    # {
+    #     "error": "name 'strategy_type' is not defined",
+    #     "cause": "strategy_type is computed in a previous step but not saved globally.",
+    #     "fix": "Store it in a shared dictionary: strategy_info = {'strategy_type': strategy_type}."
+    # },
+    # {
+    #     "error": "name 'np' is not defined",
+    #     "cause": "You are using numpy without importing it.",
+    #     "fix": "Include import numpy as np at the top of the code."
+    # },
+    # {
+    #     "error": "name 'plt' is not defined",
+    #     "cause": "You are plotting with matplotlib but didn't import it.",
+    #     "fix": "Include import matplotlib.pyplot as plt before using it."
+    # },
     # {
     #     "error": "ModuleNotFoundError: No module named 'talib'",
     #     "cause": "TA-Lib is not installed in your Python environment.",
