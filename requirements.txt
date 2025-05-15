@@ -10,3 +10,4 @@ backtrader
 scikit-learn
 plotly
 google-generativeai
+PyYAML
